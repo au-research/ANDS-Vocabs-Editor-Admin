@@ -1,13 +1,16 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.editor.admin.bean;
 
-import javax.faces.bean.SessionScoped;
+import java.io.Serializable;
+
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 /** Bean class for login information. */
+//@ManagedBean
 @Named
 @SessionScoped
-public class LoginBean {
+public class LoginBean implements Serializable {
 
     /** Username. */
     private String username;

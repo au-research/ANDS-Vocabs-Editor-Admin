@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf14371325148820" configfile="/ANDS-Vocabs-Editor-Admin/WebContent/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="login.xhtml" x="12" y="12" id="pf14371327477361" outlinks="pf14371327477362" path="/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="welcome.xhtml" x="132" y="12" id="pf14371327477373" inlinks="pf14371327477362" path="/welcome.xhtml"/>
+  <links id="pf14371327477362" target="pf14371327477373" source="pf14371327477361" outcome="login"/>
+</pageflow:Pageflow>

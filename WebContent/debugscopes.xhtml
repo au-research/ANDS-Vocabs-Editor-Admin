@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:composition template="/WEB-INF/templates/BasicTemplate.xhtml">
+
+	<ui:define name="content">
+
+        Request:
+        <h:dataTable border="1" value="#{requestScope.entrySet().toArray()}" var="map">
+			<h:column id="column1">
+    			<f:facet name="header">
+        			<h:outputText value="Key"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.key}"></h:outputText>
+			</h:column>
+			<h:column id="column2">
+    			<f:facet name="header">
+        			<h:outputText value="Value"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.value}"></h:outputText>
+			</h:column>
+		</h:dataTable>
+        
+        View:
+        <h:dataTable border="1" value="#{viewScope.entrySet().toArray()}" var="map">
+			<h:column id="column1">
+    			<f:facet name="header">
+        			<h:outputText value="Key"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.key}"></h:outputText>
+			</h:column>
+			<h:column id="column2">
+    			<f:facet name="header">
+        			<h:outputText value="Value"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.value}"></h:outputText>
+			</h:column>
+		</h:dataTable>
+        
+        Session:
+        <h:dataTable border="1" value="#{sessionScope.entrySet().toArray()}" var="map">
+			<h:column id="column1">
+    			<f:facet name="header">
+        			<h:outputText value="Key"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.key}"></h:outputText>
+			</h:column>
+			<h:column id="column2">
+    			<f:facet name="header">
+        			<h:outputText value="Value"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.value}"></h:outputText>
+			</h:column>
+		</h:dataTable>
+        
+        Application:
+        <h:dataTable border="1" value="#{applicationScope.entrySet().toArray()}" var="map">
+			<h:column id="column1">
+    			<f:facet name="header">
+        			<h:outputText value="Key"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.key}"></h:outputText>
+			</h:column>
+			<h:column id="column2">
+    			<f:facet name="header">
+        			<h:outputText value="Value"></h:outputText>
+    			</f:facet>
+        		<h:outputText value="#{map.value}"></h:outputText>
+			</h:column>
+		</h:dataTable>
+        
+	</ui:define>
+	
+</ui:composition>
+</html>
