@@ -1,9 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets">
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html">
 <head>
 <title><ui:insert name="title">ANDS Vocabularies Editor Administration</ui:insert></title>
+<h:outputScript library="js" name="jquery-2.1.4.min.js" />
+<h:outputScript library="js" name="editoradmin.js" />
 </head>
 
 <body>
@@ -14,6 +17,9 @@
     <ui:insert name="header">
       <ui:include src="/WEB-INF/templates/header.xhtml" />
     </ui:insert>
+    <h:form>
+      <h:commandLink value="Logout" action="#{loginBean.logout}" />
+    </h:form>
   </div>
 
 

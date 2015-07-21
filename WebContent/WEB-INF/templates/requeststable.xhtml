@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE div PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core">
+<body>
+  <ui:composition>
+    <h:dataTable border="1"
+      value="#{loginBean.poolPartyRequests}"
+      var="requestEntry" binding="#{requestsTable}">
+      <h:column id="selectRequestColumn">
+        <h:selectBooleanCheckbox styleClass="requestSelection"
+          value="#{loginBean.selectedPoolPartyRequests[requestsTable.rowIndex]}" />
+      </h:column>
+      <h:column id="requestTypeColumn">
+        <f:facet name="header">
+          <h:outputText value="Type"></h:outputText>
+        </f:facet>
+        <h:outputText value="#{requestEntry.type}"></h:outputText>
+      </h:column>
+      <h:column id="requestTitleColumn">
+        <f:facet name="header">
+          <h:outputText value="Title"></h:outputText>
+        </f:facet>
+        <h:outputText value="#{requestEntry.title}"></h:outputText>
+      </h:column>
+    </h:dataTable>
+  </ui:composition>
+</body>
+</html>

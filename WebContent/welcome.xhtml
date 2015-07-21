@@ -2,15 +2,22 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core">
 
-<ui:composition template="/WEB-INF/templates/BasicTemplate.xhtml">
+<ui:composition template="/WEB-INF/templates/LoggedInTemplate.xhtml">
 
-	<ui:define name="content">
-        <h:outputLabel value="Welcome #{loginBean.username}"></h:outputLabel>        
-	</ui:define>
-	
+  <ui:define name="content">
+    <h:outputLabel value="Welcome #{loginBean.username}"></h:outputLabel>
+    <h:form>
+      <ui:include src="/WEB-INF/templates/projectstable.xhtml" />
+      <ui:include src="/WEB-INF/templates/requeststable.xhtml" />
+      <h:commandButton value="Submit"
+        action="#{loginBean.processRequest()}"></h:commandButton>
+    </h:form>
+    <ui:include src="/WEB-INF/templates/lastresults.xhtml" />
+  </ui:define>
+
 </ui:composition>
 </html>

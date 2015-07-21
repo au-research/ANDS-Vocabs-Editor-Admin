@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE div PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core">
+<body>
+  <ui:composition>
+    <h:dataTable border="1"
+      value="#{loginBean.poolPartyProjects}"
+      var="projectEntry" binding="#{projectTable}">
+      <h:column id="selectProjectColumn">
+        <f:facet name="header">
+          <h:outputLink
+            onclick="toggleCheckboxes('projectSelection'); return false;">
+            <h:outputText value="Select" />
+          </h:outputLink>
+        </f:facet>
+        <h:selectBooleanCheckbox styleClass="projectSelection"
+          value="#{loginBean.selectedPoolPartyProjects[projectTable.rowIndex]}" />
+      </h:column>
+      <h:column id="projectIdColumn">
+        <f:facet name="header">
+          <h:outputText value="ID"></h:outputText>
+        </f:facet>
+        <h:outputText value="#{projectEntry.id}"></h:outputText>
+      </h:column>
+      <h:column id="projectTitleColumn">
+        <f:facet name="header">
+          <h:outputText value="Title"></h:outputText>
+        </f:facet>
+        <h:outputText value="#{projectEntry.title}"></h:outputText>
+      </h:column>
+    </h:dataTable>
+  </ui:composition>
+</body>
+</html>
