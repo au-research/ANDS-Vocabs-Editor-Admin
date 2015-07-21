@@ -3,6 +3,7 @@ package au.org.ands.vocabs.editor.admin.bean;
 
 import java.io.Serializable;
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import au.org.ands.vocabs.editor.admin.model.PoolPartyProject;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyRequest;
+import au.org.ands.vocabs.editor.admin.model.RequestResponse;
 import au.org.ands.vocabs.editor.admin.utils.PoolPartyToolkit;
 import au.org.ands.vocabs.editor.admin.utils.ToolConstants;
 
@@ -58,7 +60,7 @@ public class LoginBean implements Serializable {
     private boolean[] selectedPoolPartyRequests;
 
     /** The last results of requests. */
-    private String lastResults = "";
+    private ArrayList<RequestResponse> lastResults;
 
     /** Get the username.
      * @return the username
@@ -152,7 +154,7 @@ public class LoginBean implements Serializable {
     /** Get the last results of request processing.
      * @return the last results
      */
-    public final String getLastResults() {
+    public final ArrayList<RequestResponse> getLastResults() {
         return lastResults;
     }
 
@@ -160,7 +162,7 @@ public class LoginBean implements Serializable {
      * @param aLastResults the last results to set
      */
     public final void setLastResults(
-            final String aLastResults) {
+            final ArrayList<RequestResponse> aLastResults) {
         lastResults = aLastResults;
     }
 
@@ -182,7 +184,10 @@ public class LoginBean implements Serializable {
     public final String login() {
         poolPartyProjects = PoolPartyToolkit.getProjects(this);
         selectedPoolPartyProjects = new boolean[poolPartyProjects.length];
+        // Reset all other properties.
+        Arrays.fill(selectedPoolPartyRequests, false);
         Arrays.sort(poolPartyProjects);
+        lastResults = null;
         return ToolConstants.WELCOME_ACTION;
     }
 

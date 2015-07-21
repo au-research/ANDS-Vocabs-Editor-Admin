@@ -2,12 +2,15 @@
 package au.org.ands.vocabs.editor.admin.utils;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -20,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import au.org.ands.vocabs.editor.admin.bean.LoginBean;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyProject;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyRequest;
+import au.org.ands.vocabs.editor.admin.model.RequestResponse;
+import au.org.ands.vocabs.editor.admin.schema.Sparql;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
@@ -85,12 +90,12 @@ public final class PoolPartyToolkit {
      * @param uriSupplement The PoolParty uriSupplement.
      * @param query The SPARQL query to run.
      * @return The results of running the query. */
-    public static String runQuery(
+    public static Sparql runQuery(
             final LoginBean loginBean,
             final String uriSupplement,
             final String query) {
         String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
-                + uriSupplement;
+                + "sparql/" + uriSupplement;
 
         LOGGER.debug("Running query: " + remoteUrl);
 
@@ -105,21 +110,29 @@ public final class PoolPartyToolkit {
                         loginBean.getPassword());
         target.register(feature);
 
+        Form queryForm = new Form();
+        queryForm.param("query", query);
+        // Seem to need to set this "content-type" here.
+        // Not enough to set the Content-Type using request() below.
+        queryForm.param("content-type", MediaType.APPLICATION_XML);
+
         Invocation.Builder invocationBuilder =
-                target.request(MediaType.APPLICATION_JSON);
+                target.request();
 
-        Response response = invocationBuilder.get();
+        Response response = invocationBuilder.post(Entity.entity(queryForm,
+                MediaType.APPLICATION_FORM_URLENCODED_TYPE));
 
-        LOGGER.debug("getProjects response code: " + response.getStatus());
+        LOGGER.debug("runQuery response code: " + response.getStatus());
         if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
             // Login failed.
             return null;
         }
 
-        String responseString =
-                response.readEntity(String.class);
-        LOGGER.debug("runQuery response length = " + responseString.length());
-        return responseString;
+        Sparql responseSparql =
+                response.readEntity(Sparql.class);
+
+        LOGGER.debug("responseSparql: " + responseSparql.toString());
+        return responseSparql;
     }
 
     /** Process the user's request.
@@ -136,7 +149,8 @@ public final class PoolPartyToolkit {
                 loginBean.getSelectedPoolPartyRequests();
         PoolPartyRequest[] poolPartyRequests =
                 loginBean.getPoolPartyRequests();
-        String allResults = "";
+        ArrayList<RequestResponse> allResults =
+                new ArrayList<RequestResponse>();
 
         for (int projectIndex = 0;
                 projectIndex < selectedPoolPartyProjects.length;
@@ -155,8 +169,14 @@ public final class PoolPartyToolkit {
                 String type = poolPartyRequests[requestIndex].getType();
                 String sparql = poolPartyRequests[requestIndex].getSparql();
                 if (type.equals(ToolConstants.QUERY_TYPE)) {
-                    allResults += runQuery(loginBean,
-                        uriSupplement, sparql);
+                    Sparql result = runQuery(loginBean,
+                            uriSupplement, sparql);
+                    RequestResponse requestResponse = new RequestResponse();
+                    requestResponse.setProjectIndex(projectIndex);
+                    requestResponse.setRequestIndex(requestIndex);
+                    requestResponse.setType(ToolConstants.QUERY_TYPE);
+                    requestResponse.setSparqlResult(result);
+                    allResults.add(requestResponse);
                 }
             }
         }
