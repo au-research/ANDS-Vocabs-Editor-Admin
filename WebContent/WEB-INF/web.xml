@@ -43,6 +43,8 @@
   <welcome-file-list>
     <welcome-file>faces/login.xhtml</welcome-file>
   </welcome-file-list>
+  <!--  Not needed if proxied through Apache -->
+  <!--
   <security-constraint>
     <web-resource-collection>
         <web-resource-name>securedapp</web-resource-name>
@@ -52,4 +54,5 @@
         <transport-guarantee>CONFIDENTIAL</transport-guarantee>
     </user-data-constraint>
   </security-constraint>
+  -->
 </web-app>
