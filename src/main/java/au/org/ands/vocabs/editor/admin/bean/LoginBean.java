@@ -47,7 +47,7 @@ public class LoginBean implements Serializable {
     private PoolPartyProject[] poolPartyProjects;
 
     /** Which PoolParty projects are selected for working on. */
-    private boolean[] selectedPoolPartyProjects;
+    private Boolean[] selectedPoolPartyProjects;
 
     /** Access to the RequestsCatalogueBean application bean .*/
     @Inject
@@ -57,7 +57,7 @@ public class LoginBean implements Serializable {
     private PoolPartyRequest[] poolPartyRequests;
 
     /** Which PoolParty requests are selected for processing. */
-    private boolean[] selectedPoolPartyRequests;
+    private Boolean[] selectedPoolPartyRequests;
 
     /** The last results of requests. */
     private ArrayList<RequestResponse> lastResults;
@@ -108,7 +108,7 @@ public class LoginBean implements Serializable {
     /** Get the selected PoolParty projects.
      * @return the selected projects
      */
-    public final boolean[] getSelectedPoolPartyProjects() {
+    public final Boolean[] getSelectedPoolPartyProjects() {
         return selectedPoolPartyProjects;
     }
 
@@ -117,7 +117,7 @@ public class LoginBean implements Serializable {
      *            the selected projects to set
      */
     public final void setSelectedPoolPartyProjects(
-            final boolean[] aSelectedPoolPartyProjects) {
+            final Boolean[] aSelectedPoolPartyProjects) {
         selectedPoolPartyProjects = aSelectedPoolPartyProjects;
     }
 
@@ -139,7 +139,7 @@ public class LoginBean implements Serializable {
     /** Get the selected PoolParty requests.
      * @return the selected requests
      */
-    public final boolean[] getSelectedPoolPartyRequests() {
+    public final Boolean[] getSelectedPoolPartyRequests() {
         return selectedPoolPartyRequests;
     }
 
@@ -147,7 +147,7 @@ public class LoginBean implements Serializable {
      * @param aSelectedPoolPartyRequests the selected requests to set
      */
     public final void setSelectedPoolPartyRequests(
-            final boolean[] aSelectedPoolPartyRequests) {
+            final Boolean[] aSelectedPoolPartyRequests) {
         selectedPoolPartyRequests = aSelectedPoolPartyRequests;
     }
 
@@ -173,7 +173,7 @@ public class LoginBean implements Serializable {
     public void initialize() {
         LOGGER.debug("In LoginBean initialize");
         poolPartyRequests = requestsCatalogueBean.getPoolPartyRequests();
-        selectedPoolPartyRequests = new boolean[poolPartyRequests.length];
+        selectedPoolPartyRequests = new Boolean[poolPartyRequests.length];
     }
 
     /** Login. Check the user credentials. If successful, poolPartyProjects is
@@ -187,7 +187,7 @@ public class LoginBean implements Serializable {
             /* Invalid login. */
             return ToolConstants.HOME_ACTION;
         }
-        selectedPoolPartyProjects = new boolean[poolPartyProjects.length];
+        selectedPoolPartyProjects = new Boolean[poolPartyProjects.length];
         // Reset all other properties.
         Arrays.fill(selectedPoolPartyRequests, false);
         Arrays.sort(poolPartyProjects);

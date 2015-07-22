@@ -191,11 +191,11 @@ public final class PoolPartyToolkit {
      */
     public static String processRequest(final LoginBean loginBean) {
         LOGGER.debug("Called processRequest");
-        boolean[] selectedPoolPartyProjects =
+        Boolean[] selectedPoolPartyProjects =
                 loginBean.getSelectedPoolPartyProjects();
         PoolPartyProject[] poolPartyProjects =
                 loginBean.getPoolPartyProjects();
-        boolean[] selectedPoolPartyRequests =
+        Boolean[] selectedPoolPartyRequests =
                 loginBean.getSelectedPoolPartyRequests();
         PoolPartyRequest[] poolPartyRequests =
                 loginBean.getPoolPartyRequests();
