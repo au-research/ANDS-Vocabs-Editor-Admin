@@ -59,6 +59,14 @@
           <globmapper from="*" to="WEB-INF/lib/*" />
         </chainedmapper>
       </mappedresources>
+      <mappedresources>
+        <fileset dir="WebContent" includes="**/*.xhtml" />
+          <globmapper from="*" to="*" />
+      </mappedresources>
+      <mappedresources>
+        <fileset dir="WebContent" includes="resources/**/*" />
+          <globmapper from="*" to="*" />
+      </mappedresources>
       <!-- Can't use JAR; see above. -->
       <!-- <lib file="${jar}" /> -->
       <!-- Include raw classes instead. -->
