@@ -177,7 +177,6 @@ public final class PoolPartyToolkit {
         String responseString =
                 response.readEntity(String.class);
 
-        LOGGER.debug("runUpdate response: " + responseString);
         if (responseString.isEmpty()) {
             // Give back something, rather than nothing.
             responseString = "OK";
