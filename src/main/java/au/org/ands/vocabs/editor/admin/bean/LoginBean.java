@@ -192,6 +192,7 @@ public class LoginBean implements Serializable {
         Arrays.fill(selectedPoolPartyRequests, false);
         Arrays.sort(poolPartyProjects);
         lastResults = null;
+        LOGGER.debug("Login by user: " + username);
         return ToolConstants.WELCOME_ACTION;
     }
 
@@ -219,6 +220,7 @@ public class LoginBean implements Serializable {
      * @return The name of the action that goes to the home page.
      */
     public final String logout() {
+        LOGGER.debug("Logout by user: " + username);
         username = "";
         password = "";
         poolPartyProjects = null;
