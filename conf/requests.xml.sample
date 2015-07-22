@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE requests>
+<requests>
+  <request>
+    <title>Show SKOS concepts without a skos:inScheme property (LIMIT 50)</title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI {
+      ?Concept_IRI a skos:Concept
+      FILTER NOT EXISTS { ?Concept_IRI skos:inScheme ?o }
+    }
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title>Add a skos:inScheme property to all SKOS concepts that don't already have one</title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    INSERT {
+      ?s skos:inScheme ?scheme
+    }
+    WHERE {
+      ?s a skos:Concept .
+      ?s skos:broader*/skos:topConceptOf ?scheme
+      FILTER NOT EXISTS { ?s skos:inScheme ?o }
+    }
+    ]]></sparql>
+  </request></requests>

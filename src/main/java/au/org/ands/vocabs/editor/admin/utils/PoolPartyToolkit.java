@@ -24,7 +24,6 @@ import au.org.ands.vocabs.editor.admin.bean.LoginBean;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyProject;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyRequest;
 import au.org.ands.vocabs.editor.admin.model.RequestResponse;
-import au.org.ands.vocabs.editor.admin.schema.Sparql;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
@@ -90,7 +89,7 @@ public final class PoolPartyToolkit {
      * @param uriSupplement The PoolParty uriSupplement.
      * @param query The SPARQL query to run.
      * @return The results of running the query. */
-    public static Sparql runQuery(
+    public static String runQuery(
             final LoginBean loginBean,
             final String uriSupplement,
             final String query) {
@@ -128,11 +127,62 @@ public final class PoolPartyToolkit {
             return null;
         }
 
-        Sparql responseSparql =
-                response.readEntity(Sparql.class);
+        String responseSparql =
+                response.readEntity(String.class);
 
-        LOGGER.debug("responseSparql: " + responseSparql.toString());
         return responseSparql;
+    }
+
+    /** Run an update against a project.
+     * @param loginBean The bean containing the user's PoolParty username
+     * and password.
+     * @param projectID The PoolParty project ID.
+     * @param update The SPARQL update to run.
+     * @return The results of running the query. */
+    public static String runUpdate(
+            final LoginBean loginBean,
+            final String projectID,
+            final String update) {
+        String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
+                + "api/projects/" + projectID + "/update";
+
+        LOGGER.debug("Running update: " + remoteUrl);
+
+        Client client = ClientBuilder.newClient();
+        // Need to register the Jackson provider in order
+        // to deserialize the JSON returned by PoolParty.
+//        client.register(JacksonJaxbJsonProvider.class);
+
+        WebTarget target = client.target(remoteUrl);
+        HttpAuthenticationFeature feature =
+                HttpAuthenticationFeature.basic(loginBean.getUsername(),
+                        loginBean.getPassword());
+        target.register(feature);
+
+        // Seem to need to set this "content-type" here.
+        // Not enough to set the Content-Type using request() below.
+
+        Invocation.Builder invocationBuilder =
+                target.request(MediaType.TEXT_PLAIN_TYPE);
+
+        Response response = invocationBuilder.post(Entity.entity(update,
+                MediaType.TEXT_PLAIN));
+
+        LOGGER.debug("runUpdate response code: " + response.getStatus());
+        if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
+            // Login failed.
+            return null;
+        }
+
+        String responseString =
+                response.readEntity(String.class);
+
+        LOGGER.debug("runUpdate response: " + responseString);
+        if (responseString.isEmpty()) {
+            // Give back something, rather than nothing.
+            responseString = "OK";
+        }
+        return responseString;
     }
 
     /** Process the user's request.
@@ -159,23 +209,34 @@ public final class PoolPartyToolkit {
                 continue;
             }
             PoolPartyProject project = poolPartyProjects[projectIndex];
-            String uriSupplement = project.getUriSupplement();
             for (int requestIndex = 0;
                     requestIndex < selectedPoolPartyRequests.length;
                     requestIndex++) {
                 if (!selectedPoolPartyRequests[requestIndex]) {
                     continue;
                 }
-                String type = poolPartyRequests[requestIndex].getType();
-                String sparql = poolPartyRequests[requestIndex].getSparql();
+                PoolPartyRequest request = poolPartyRequests[requestIndex];
+                String type = request.getType();
+                String sparql = request.getSparql();
                 if (type.equals(ToolConstants.QUERY_TYPE)) {
-                    Sparql result = runQuery(loginBean,
+                    String uriSupplement = project.getUriSupplement();
+                    String result = runQuery(loginBean,
                             uriSupplement, sparql);
                     RequestResponse requestResponse = new RequestResponse();
-                    requestResponse.setProjectIndex(projectIndex);
-                    requestResponse.setRequestIndex(requestIndex);
+                    requestResponse.setProject(project);
+                    requestResponse.setRequest(request);
                     requestResponse.setType(ToolConstants.QUERY_TYPE);
                     requestResponse.setSparqlResult(result);
+                    allResults.add(requestResponse);
+                } else if (type.equals(ToolConstants.UPDATE_TYPE)) {
+                    String projectID = project.getId();
+                    String result = runUpdate(loginBean,
+                            projectID, sparql);
+                    RequestResponse requestResponse = new RequestResponse();
+                    requestResponse.setProject(project);
+                    requestResponse.setRequest(request);
+                    requestResponse.setType(ToolConstants.UPDATE_TYPE);
+                    requestResponse.setUpdateResult(result);
                     allResults.add(requestResponse);
                 }
             }

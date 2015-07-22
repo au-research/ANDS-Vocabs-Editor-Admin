@@ -1,9 +1,22 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.editor.admin.model;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 
-import au.org.ands.vocabs.editor.admin.schema.Sparql;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import au.org.ands.vocabs.editor.admin.utils.ToolProperties;
 
 /** Response of one request to PoolParty, either of a query or
  * an update. */
@@ -12,44 +25,55 @@ public class RequestResponse implements Serializable {
     /** Serial version UID for serialization. */
     private static final long serialVersionUID = 5295284562748569981L;
 
-    /** The project index (into LoginBean.poolPartyProjects). */
-    private int projectIndex;
+    /** The class object for this class. */
+    private static Class<?> classObject =
+            MethodHandles.lookup().lookupClass();
 
-    /** The request index (into LoginBean.poolPartyProjects). */
-    private int requestIndex;
+    /** The LOGGER for this class. */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(classObject);
+
+    /** The PoolParty project. */
+    private PoolPartyProject project;
+
+    /** The request. */
+    private PoolPartyRequest request;
 
     /** The request type. Either "Query" or "Update".*/
     private String type;
 
-    /** The SPARQL Result response, if a Query .*/
-    private Sparql sparqlResult;
+    /** The SPARQL Result response, if this is a Query. */
+    private String sparqlResult;
 
-    /** Get the project index (into LoginBean.poolPartyProjects).
-     * @return the project index
+    /** The SPARQL Result response, if this is an Update. */
+    private String updateResult;
+
+    /** Get the PoolParty project.
+     * @return the project
      */
-    public final int getProjectIndex() {
-        return projectIndex;
+    public final PoolPartyProject getProject() {
+        return project;
     }
 
-    /** Set the project index (into LoginBean.poolPartyProjects).
-     * @param aProjectIndex the project index to set
+    /** Set the PoolParty project.
+     * @param aProject the PoolParty project to set
      */
-    public final void setProjectIndex(final int aProjectIndex) {
-        projectIndex = aProjectIndex;
+    public final void setProject(final PoolPartyProject aProject) {
+        project = aProject;
     }
 
-    /** Get the request index (into LoginBean.poolPartyRequests).
-     * @return the request index
+    /** Get the request.
+     * @return the request
      */
-    public final int getRequestIndex() {
-        return requestIndex;
+    public final PoolPartyRequest getRequest() {
+        return request;
     }
 
-    /** Set the request index (into LoginBean.poolPartyRequests).
-     * @param aRequestIndex the request index to set
+    /** Set the request.
+     * @param aRequest the request to set
      */
-    public final void setRequestIndex(final int aRequestIndex) {
-        requestIndex = aRequestIndex;
+    public final void setRequest(final PoolPartyRequest aRequest) {
+        request = aRequest;
     }
 
     /** Get the request type.
@@ -67,17 +91,64 @@ public class RequestResponse implements Serializable {
     }
 
     /** Get the SPARQL Result response, if this was from a query.
-     * @return the title
+     * @return the SPARQL Result response
      */
-    public final Sparql getSparqlResult() {
+    public final String getSparqlResult() {
         return sparqlResult;
     }
 
     /** Set the SPARQL Result response, if this was from a query.
      * @param aSparqlResult the SPARQL Result to set
      */
-    public final void setSparqlResult(final Sparql aSparqlResult) {
+    public final void setSparqlResult(final String aSparqlResult) {
         sparqlResult = aSparqlResult;
+    }
+
+    /** Get the SPARQL Update response, if this was from an update.
+     * @return the Update response
+     */
+    public final String getUpdateResult() {
+        return updateResult;
+    }
+
+    /** Set the SPARQL Update response, if this was from an update.
+     * @param anUpdateResult the Update response to set
+     */
+    public final void setUpdateResult(final String anUpdateResult) {
+        updateResult = anUpdateResult;
+    }
+
+    /** File representing the XSLT script. */
+    private static String stylesheet =
+            ToolProperties.getProperty("SPARQLResults.xsl");
+
+    /** TransformerFactory used when running the XSLT script. */
+    private static TransformerFactory tFactory =
+            TransformerFactory.newInstance();
+
+    /** Get the SPARQL Result response, if this was from a query.
+     *  The return value is the response converted to
+     *  an XHTML fragment suitable for embedding in a web page.
+     * @return the SPARQL Result response, as an XHTML fragment
+     */
+    public final String getSparqlResultAsXHTML() {
+        try {
+            StringReader reader = new StringReader(sparqlResult);
+            StringWriter writer = new StringWriter();
+            InputStream input = classObject.getClassLoader().
+                    getResourceAsStream(stylesheet);
+            if (input == null) {
+                throw new RuntimeException("Can't find SPARQL Results XSL.");
+            }
+            StreamSource stylesource = new StreamSource(input);
+            Transformer transformer = tFactory.newTransformer(stylesource);
+            transformer.transform(new StreamSource(reader),
+                    new StreamResult(writer));
+            return writer.toString();
+        } catch (TransformerException e) {
+            LOGGER.error("Exception in getSparqlResultAsXHTML: ", e);
+        }
+        return "Error in getSparqlResultAsXHTML";
     }
 
 }

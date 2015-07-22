@@ -2,4 +2,10 @@
 
 ## POOLPARTY 
 
+# PoolParty URL, up to and including /PoolParty/
 PoolParty.remoteUrl = [pool party api url]
+
+# SPARQL Results
+
+# XSL that converts SPARQL Results to an XHTML fragment
+SPARQLResults.xsl = [path to XSL script]
