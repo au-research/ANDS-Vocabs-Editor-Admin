@@ -183,6 +183,10 @@ public class LoginBean implements Serializable {
      */
     public final String login() {
         poolPartyProjects = PoolPartyToolkit.getProjects(this);
+        if (poolPartyProjects == null) {
+            /* Invalid login. */
+            return ToolConstants.HOME_ACTION;
+        }
         selectedPoolPartyProjects = new boolean[poolPartyProjects.length];
         // Reset all other properties.
         Arrays.fill(selectedPoolPartyRequests, false);
