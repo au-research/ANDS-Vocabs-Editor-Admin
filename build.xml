@@ -27,7 +27,7 @@
     <mkdir dir="${build}" />
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
       <src path="src/main/java" />
-      <src path="src/test/java" />
+      <!-- <src path="src/test/java" /> -->
       <classpath refid="compile-main.classpath" />
     </javac>
   </target>
@@ -45,10 +45,10 @@
       <metainf dir="WebContent/META-INF" />
       <webinf dir="WebContent/WEB-INF" />
       <!-- Copy persistence.xml -->
-      <mappedresources>
+      <!-- <mappedresources>
         <fileset dir="src/main/java/META-INF" />
         <globmapper from="*" to="WEB-INF/classes/META-INF/*" />
-      </mappedresources>
+      </mappedresources> -->
       <!-- Need to use this trick instead of a lib element because
 			     the JAR files are stored in subdirectories.
 			     See http://stackoverflow.com/questions/2802671/how-to-perform-ant-path-mapping-in-a-war-task -->
