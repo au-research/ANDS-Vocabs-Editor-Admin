@@ -9,20 +9,26 @@
     <ui:fragment rendered="#{not empty loginBean.lastResults}">
       <div>
         <h2>Results</h2>
-        <ui:repeat var="item" value="#{loginBean.lastResults}">
-          <h3>
-            Project:
-            <h:outputText value="#{item.project.title}" />
-          </h3>
-          <h3>
-            Request:
-            <h:outputText value="#{item.request.title}" />
-          </h3>
-          <h:outputText rendered="#{item.type eq 'Query'}"  value="#{item.sparqlResultAsXHTML}"
-            escape="false"></h:outputText>
-          <h:outputText rendered="#{item.type eq 'Update'}"  value="Result: #{item.updateResult}"
-            escape="false"></h:outputText>
-        </ui:repeat>
+        <h:form>
+          <ui:repeat var="item" value="#{loginBean.lastResults}">
+            <h3>
+              Project:
+              <h:outputText value="#{item.project.title}" />
+            </h3>
+            <h3>
+              Request:
+              <h:outputText value="#{item.request.title}" />
+            </h3>
+            <ui:fragment rendered="#{item.type eq 'Query'}">
+              <h:commandLink value="Download result"
+                action="#{item.sparqlResultDownload()}" />
+              <h:outputText value="#{item.sparqlResultAsXHTML}"
+                escape="false"></h:outputText>
+            </ui:fragment>
+            <h:outputText rendered="#{item.type eq 'Update'}"
+              value="Result: #{item.updateResult}" escape="false"></h:outputText>
+          </ui:repeat>
+        </h:form>
       </div>
     </ui:fragment>
   </ui:composition>

@@ -1,12 +1,17 @@
 /** See the file "LICENSE" for the full license governing this code. */
 package au.org.ands.vocabs.editor.admin.model;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.Charset;
 
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -149,6 +154,32 @@ public class RequestResponse implements Serializable {
             LOGGER.error("Exception in getSparqlResultAsXHTML: ", e);
         }
         return "Error in getSparqlResultAsXHTML";
+    }
+
+    /** Get the SPARQL Result response, if this was from a query.
+     *  The return value is the response converted to
+     *  an XHTML fragment suitable for embedding in a web page.
+     *  Thanks to
+     *  http://stackoverflow.com/questions/9391838/
+     *  how-to-provide-a-file-download-from-a-jsf-backing-bean
+     */
+    public final void sparqlResultDownload() {
+        try {
+            FacesContext fc = FacesContext.getCurrentInstance();
+            ExternalContext ec = fc.getExternalContext();
+            ec.responseReset();
+            ec.setResponseContentType("application/sparql-results+xml");
+            ec.setResponseContentLength(sparqlResult.length());
+            ec.setResponseHeader("Content-Disposition",
+                    "attachment; filename=\"" + "SPARQLResult-"
+                            + project.getId()
+                            + ".xml" + "\"");
+            OutputStream output = ec.getResponseOutputStream();
+            output.write(sparqlResult.getBytes(Charset.forName("UTF-8")));
+            fc.responseComplete();
+       } catch (IOException e) {
+            LOGGER.error("Exception in sparqlResultDownload: ", e);
+        }
     }
 
 }
