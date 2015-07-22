@@ -60,7 +60,7 @@
         </chainedmapper>
       </mappedresources>
       <mappedresources>
-        <fileset dir="WebContent" includes="**/*.xhtml" />
+        <fileset dir="WebContent" includes="*.xhtml" />
           <globmapper from="*" to="*" />
       </mappedresources>
       <mappedresources>
