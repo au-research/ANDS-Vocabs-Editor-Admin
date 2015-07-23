@@ -34,15 +34,16 @@ public class RequestsCatalogueBean implements Serializable {
     /** Serial version UID for serialization. */
     private static final long serialVersionUID = -8211762082373733753L;
 
-    /** Base name of the requests catalogue file. */
+    /** Base name of the requests catalogue file.
+     *  Possible future work: make this a setting in editorconfig.properties.
+     */
     private static final String REQUESTS_CATALOGUE_FILE = "requests.xml";
 
     /** PoolParty projects available to this user. */
     private PoolPartyRequest[] poolPartyRequests;
 
-    /**
-     * Get the user's PoolParty requests. The array is sorted by title.
-     * @return the poolPartyRequests
+    /** Get the user's PoolParty requests. The array is sorted by title.
+     *  @return the poolPartyRequests
      */
     public PoolPartyRequest[] getPoolPartyRequests() {
         return poolPartyRequests;
