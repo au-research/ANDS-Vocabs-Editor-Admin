@@ -123,7 +123,7 @@ public final class PoolPartyToolkit {
 
         LOGGER.debug("runQuery response code: " + response.getStatus());
         if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
-            // Login failed.
+            // Query failed.
             return null;
         }
 
@@ -170,7 +170,7 @@ public final class PoolPartyToolkit {
 
         LOGGER.debug("runUpdate response code: " + response.getStatus());
         if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
-            // Login failed.
+            // Update failed.
             return null;
         }
 
@@ -225,6 +225,7 @@ public final class PoolPartyToolkit {
                     requestResponse.setProject(project);
                     requestResponse.setRequest(request);
                     requestResponse.setType(ToolConstants.QUERY_TYPE);
+                    requestResponse.setSuccessful(result != null);
                     requestResponse.setSparqlResult(result);
                     allResults.add(requestResponse);
                 } else if (type.equals(ToolConstants.UPDATE_TYPE)) {
@@ -235,6 +236,7 @@ public final class PoolPartyToolkit {
                     requestResponse.setProject(project);
                     requestResponse.setRequest(request);
                     requestResponse.setType(ToolConstants.UPDATE_TYPE);
+                    requestResponse.setSuccessful(result != null);
                     requestResponse.setUpdateResult(result);
                     allResults.add(requestResponse);
                 }

@@ -47,6 +47,9 @@ public class RequestResponse implements Serializable {
     /** The request type. Either "Query" or "Update".*/
     private String type;
 
+    /** Was the query or update successful? */
+    private Boolean successful = false;
+
     /** The SPARQL Result response, if this is a Query. */
     private String sparqlResult;
 
@@ -95,6 +98,20 @@ public class RequestResponse implements Serializable {
         type = aType;
     }
 
+    /** Get the successful value.
+     * @return the successful value
+     */
+    public final boolean isSuccessful() {
+        return successful;
+    }
+
+    /** Set the successful value.
+     * @param aSuccessful the successful value to set
+     */
+    public final void setSuccessful(final Boolean aSuccessful) {
+        successful = aSuccessful;
+    }
+
     /** Get the SPARQL Result response, if this was from a query.
      * @return the SPARQL Result response
      */
@@ -137,6 +154,11 @@ public class RequestResponse implements Serializable {
      * @return the SPARQL Result response, as an XHTML fragment
      */
     public final String getSparqlResultAsXHTML() {
+        if (!successful || sparqlResult == null) {
+            // The query returned an error status, or (somehow)
+            // there is no result to return.
+            return "Error";
+        }
         try {
             StringReader reader = new StringReader(sparqlResult);
             StringWriter writer = new StringWriter();
@@ -168,6 +190,11 @@ public class RequestResponse implements Serializable {
             FacesContext fc = FacesContext.getCurrentInstance();
             ExternalContext ec = fc.getExternalContext();
             ec.responseReset();
+            if (!successful || sparqlResult == null) {
+                // The query returned an error status, or (somehow)
+                // there is no result to return.
+                return;
+            }
             ec.setResponseContentType("application/sparql-results+xml");
             ec.setResponseContentLength(sparqlResult.length());
             ec.setResponseHeader("Content-Disposition",
