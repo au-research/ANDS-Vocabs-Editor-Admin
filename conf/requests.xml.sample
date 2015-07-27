@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE requests>
 <requests>
+
+  <!-- skos:inScheme -->
+
   <request>
     <title>Show SKOS concepts without a skos:inScheme property (LIMIT 50)</title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Concept_IRI {
+    SELECT ?Concept_IRI ?prefLabel {
       ?Concept_IRI a skos:Concept
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
       FILTER NOT EXISTS { ?Concept_IRI skos:inScheme ?o }
     }
+    ORDER BY ?Concept_IRI
     LIMIT 50
     ]]></sparql>
   </request>
@@ -27,4 +32,84 @@
       FILTER NOT EXISTS { ?s skos:inScheme ?o }
     }
     ]]></sparql>
-  </request></requests>
+  </request>
+
+  <!-- Dangling concepts -->
+
+  <request>
+    <title>Show dangling SKOS concepts (LIMIT 50)</title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI ?prefLabel {
+      ?Concept_IRI a skos:Concept
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
+      FILTER NOT EXISTS { ?Concept_IRI skos:broader*/skos:topConceptOf ?scheme }
+    }
+    ORDER BY ?Concept_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title>Show dangling SKOS concepts (no LIMIT)</title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI ?prefLabel {
+      ?Concept_IRI a skos:Concept
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
+      FILTER NOT EXISTS { ?Concept_IRI skos:broader*/skos:topConceptOf ?scheme }
+    }
+    ORDER BY ?Concept_IRI
+    ]]></sparql>
+  </request>
+  <request>
+    <title>Delete dangling SKOS concepts</title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    DELETE {
+      ?Concept_IRI ?p ?o
+    }
+    WHERE {
+      ?Concept_IRI a skos:Concept .
+      ?Concept_IRI ?p ?o
+      FILTER NOT EXISTS { ?Concept_IRI skos:broader*/skos:topConceptOf ?scheme }
+    }
+    ]]></sparql>
+  </request>
+
+  <!-- Deprecated resources -->
+
+  <request>
+    <title>Show deprecated resources (LIMIT 50)</title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?Label {
+      ?Resource_IRI owl:deprecated true
+      OPTIONAL { ?Resource_IRI rdfs:label ?Label }
+    }
+    ORDER BY ?Resource_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title>Show deprecated resources (no LIMIT)</title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?Label {
+      ?Resource_IRI owl:deprecated true
+      OPTIONAL { ?Resource_IRI rdfs:label ?Label }
+    }
+    ORDER BY ?Resource_IRI
+    ]]></sparql>
+  </request>
+
+
+</requests>
