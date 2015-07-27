@@ -20,7 +20,7 @@
               <h:outputText value="#{item.request.title}" />
             </h3>
             <ui:fragment rendered="#{item.type eq 'Query' and item.successful}">
-              <h:commandLink value="Download result"
+              <h:commandLink value="Download SPARQL Results Document"
                 action="#{item.sparqlResultDownload()}" />
               <h:outputText value="#{item.sparqlResultAsXHTML}"
                 escape="false"></h:outputText>
@@ -28,7 +28,7 @@
             <h:outputText rendered="#{item.type eq 'Update' and item.successful}"
               value="Result: #{item.updateResult}" escape="false"></h:outputText>
             <h:outputText rendered="#{not item.successful}"
-              value="There was an error processing the request." escape="false"></h:outputText>
+              value="There was an error processing this request." escape="false"></h:outputText>
           </ui:repeat>
         </h:form>
       </div>
