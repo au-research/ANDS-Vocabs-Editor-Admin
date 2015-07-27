@@ -82,6 +82,9 @@ public class RequestsCatalogueBean implements Serializable {
             poolPartyRequests =
                     ((PoolPartyRequests) jaxbUnmarshaller.unmarshal(input)).
                     getRequests();
+            // Can't make up my mind whether to sort or not.
+            // Leave unsorted for now.
+            // Arrays.sort(poolPartyRequests);
         } catch (JAXBException e) {
             LOGGER.error("Exception while parsing requests catalogue", e);
             return;
