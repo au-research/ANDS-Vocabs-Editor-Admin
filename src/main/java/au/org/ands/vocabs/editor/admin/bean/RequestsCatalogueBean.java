@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.lang.invoke.MethodHandles;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -20,8 +20,12 @@ import au.org.ands.vocabs.editor.admin.model.PoolPartyRequest;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyRequests;
 
 /** Bean class for the catalogue of available requests. */
+// Previously, this was @ApplicationScoped. But that scope is too long;
+// the bean is even persisted across Tomcat shutdown/startup, so changes
+// to requests.xml are never picked up. By making the bean @SessionScoped,
+// requests.xml is read for each session.
 @Named
-@ApplicationScoped
+@SessionScoped
 public class RequestsCatalogueBean implements Serializable {
 
     // If needed, uncomment the following. NB: this has to be static,
