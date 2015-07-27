@@ -66,7 +66,9 @@ Modified by ANDS for Editor Admin Tool.
 	</xsl:text>
 	<tr>
 	  <xsl:for-each select="res:head/res:variable">
-	    <th><xsl:value-of select="@name"/></th>
+        <!-- ANDS modification: support nicer headings. Use an underscore
+             in the variable name; it will be replaced with a space. -->
+	    <th><xsl:value-of select="translate(@name,'_',' ')"/></th>
 	  </xsl:for-each>
 	</tr>
 	<xsl:text>
