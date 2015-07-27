@@ -217,6 +217,9 @@ public final class PoolPartyToolkit {
                 PoolPartyRequest request = poolPartyRequests[requestIndex];
                 String type = request.getType();
                 String sparql = request.getSparql();
+                LOGGER.debug("processRequest: user: " + loginBean.getUsername()
+                        + ", project ID: " + project.getId()
+                        + ", request: " + request.getTitle());
                 if (type.equals(ToolConstants.QUERY_TYPE)) {
                     String uriSupplement = project.getUriSupplement();
                     String result = runQuery(loginBean,

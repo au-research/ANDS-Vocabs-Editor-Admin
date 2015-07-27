@@ -200,19 +200,25 @@ public class LoginBean implements Serializable {
      * @return The name of the resulting action.
      */
     public final String processRequest() {
-        LOGGER.debug("Called LoginBean processRequest()");
-        if (selectedPoolPartyProjects == null) {
-            LOGGER.debug("selectedPoolPartyProjects: null");
-        } else {
-            LOGGER.debug("selectedPoolPartyProjects: "
-                    + Arrays.toString(selectedPoolPartyProjects));
-        }
-        if (selectedPoolPartyRequests == null) {
-            LOGGER.debug("selectedPoolPartyRequests: null");
-        } else {
-            LOGGER.debug("selectedPoolPartyRequests: "
-                    + Arrays.toString(selectedPoolPartyRequests));
-        }
+        // This level of logging was useful to get the JSF pages
+        // up and running.
+        // There is now additional logging in
+        // PoolPartyToolkit.processRequest(), which should be enough
+        // for most debugging.
+        // The code is left here in case it is needed again.
+//        LOGGER.debug("Called LoginBean processRequest()");
+//        if (selectedPoolPartyProjects == null) {
+//            LOGGER.debug("selectedPoolPartyProjects: null");
+//        } else {
+//            LOGGER.debug("selectedPoolPartyProjects: "
+//                    + Arrays.toString(selectedPoolPartyProjects));
+//        }
+//        if (selectedPoolPartyRequests == null) {
+//            LOGGER.debug("selectedPoolPartyRequests: null");
+//        } else {
+//            LOGGER.debug("selectedPoolPartyRequests: "
+//                    + Arrays.toString(selectedPoolPartyRequests));
+//        }
         return PoolPartyToolkit.processRequest(this);
     }
 
