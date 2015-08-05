@@ -115,9 +115,15 @@ Modified by ANDS for Editor Admin Tool.
 
   <xsl:template match="res:literal">
     <xsl:choose>
+      <!-- ANDS modification: specific nice treatment for booleans:
+           don't print the datatype. -->
+      <xsl:when test="@datatype and @datatype = 'http://www.w3.org/2001/XMLSchema#boolean'">
+        <!-- Boolean literal value -->
+        <xsl:value-of select="text()"/>
+      </xsl:when>
       <xsl:when test="@datatype">
-	<!-- datatyped literal value -->
-	<xsl:value-of select="text()"/> (datatype <xsl:value-of select="@datatype"/> )
+  <!-- datatyped literal value -->
+  <xsl:value-of select="text()"/> (datatype <xsl:value-of select="@datatype"/> )
       </xsl:when>
       <xsl:when test="@xml:lang">
 	<!-- lang-string -->
