@@ -24,7 +24,8 @@
         <f:facet name="header">
           <h:outputText value="Title" />
         </f:facet>
-        <h:outputText value="#{requestEntry.title}"></h:outputText>
+        <ui:remove><!-- Use escape="false" here to allow titles to contain HTML tags. --></ui:remove>
+        <h:outputText value="#{requestEntry.title}" escape="false" />
       </h:column>
     </h:dataTable>
   </ui:composition>

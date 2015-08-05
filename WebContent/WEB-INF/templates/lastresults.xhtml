@@ -17,7 +17,8 @@
             </h3>
             <h3>
               Request:
-              <h:outputText value="#{item.request.title}" />
+              <ui:remove><!-- Use escape="false" here to allow titles to contain HTML tags. --></ui:remove>
+              <h:outputText value="#{item.request.title}" escape="false"/>
             </h3>
             <ui:fragment rendered="#{item.type eq 'Query' and item.successful}">
               <h:commandLink value="Download SPARQL Results Document"
