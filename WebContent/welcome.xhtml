@@ -9,7 +9,7 @@
 <ui:composition template="/WEB-INF/templates/LoggedInTemplate.xhtml">
 
   <ui:define name="content">
-    <h:outputText value="You are logged in as #{loginBean.username}."></h:outputText>
+    <h:outputText value="You are logged in as #{loginBean.username}." />
     <br />
     <h:form>
       <ui:include src="/WEB-INF/templates/projectstable.xhtml" />
@@ -17,7 +17,7 @@
       <ui:include src="/WEB-INF/templates/requeststable.xhtml" />
       <br />
       <h:commandButton value="Submit"
-        action="#{loginBean.processRequest()}"></h:commandButton>
+        action="#{loginBean.processRequest()}" />
     </h:form>
     <ui:include src="/WEB-INF/templates/lastresults.xhtml" />
   </ui:define>
