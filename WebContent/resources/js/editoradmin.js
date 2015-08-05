@@ -12,3 +12,9 @@ function toggleCheckboxes(elementStyle) {
     allElements.prop("checked", true);
   }
 };
+
+/* Toggle display of the text of a SPARQL Query/Update. */
+function toggle_sparql(id) {
+  var element = jQuery("." + id);
+  element.toggle();
+}
