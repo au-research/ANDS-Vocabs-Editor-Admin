@@ -43,6 +43,10 @@
   <welcome-file-list>
     <welcome-file>faces/login.xhtml</welcome-file>
   </welcome-file-list>
+  <error-page>
+    <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+    <location>/faces/login.xhtml</location>
+  </error-page>
   <!--  Not needed if proxied through Apache -->
   <!--
   <security-constraint>
