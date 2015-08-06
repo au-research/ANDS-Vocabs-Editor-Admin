@@ -3,11 +3,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:ui="http://java.sun.com/jsf/facelets"
   xmlns:h="http://java.sun.com/jsf/html">
-<head>
+<h:head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title><ui:insert name="title">ANDS Vocabularies Editor Administration</ui:insert></title>
+<!-- Bootstrap -->
+<h:outputStylesheet library="css" name="bootstrap.min.css" />
+<!-- JQuery -->
 <h:outputScript library="js" name="jquery-2.1.4.min.js" />
+<!-- Application-specific -->
 <h:outputScript library="js" name="editoradmin.js" />
-</head>
+</h:head>
 
 <body>
   <ui:debug hotkey="x"
@@ -17,15 +23,20 @@
     <ui:insert name="header">
       <ui:include src="/WEB-INF/templates/header.xhtml" />
     </ui:insert>
-    <h:form>
-      <h:commandLink value="Logout" action="#{loginBean.logout}" />
-    </h:form>
   </div>
+
+  <div class="container">
+    <h:form>
+      <h:commandLink class="btn btn-sm btn-primary" value="Logout" action="#{loginBean.logout}" />
+    </h:form>
+
 
 
   <div id="content">
     <ui:insert name="content">
     </ui:insert>
+  </div>
+
   </div>
 
   <div id="footer">

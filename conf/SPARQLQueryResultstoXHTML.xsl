@@ -61,9 +61,10 @@ Modified by ANDS for Editor Admin Tool.
     <div>
       <h4>Variable Bindings Result</h4>
 
-      <table border="1">
+      <table class="table table-condensed table-hover">
 	<xsl:text>
 	</xsl:text>
+  <thead>
 	<tr>
 	  <xsl:for-each select="res:head/res:variable">
         <!-- ANDS modification: support nicer headings. Use an underscore
@@ -71,13 +72,16 @@ Modified by ANDS for Editor Admin Tool.
 	    <th><xsl:value-of select="translate(@name,'_',' ')"/></th>
 	  </xsl:for-each>
 	</tr>
+  </thead>
 	<xsl:text>
 	</xsl:text>
+  <tbody>
 	<xsl:for-each select="res:results/res:result">
 	  <tr>
 	    <xsl:apply-templates select="."/>
 	  </tr>
 	</xsl:for-each>
+  </tbody>
       </table>
     </div>
   </xsl:template>

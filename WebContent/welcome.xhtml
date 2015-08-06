@@ -16,9 +16,10 @@
       <br />
       <ui:include src="/WEB-INF/templates/requeststable.xhtml" />
       <br />
-      <h:commandButton value="Submit"
+      <h:commandButton class="btn btn-primary" value="Submit"
         action="#{loginBean.processRequest()}" />
     </h:form>
+    <br />
     <ui:include src="/WEB-INF/templates/lastresults.xhtml" />
   </ui:define>
 

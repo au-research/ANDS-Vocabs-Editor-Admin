@@ -7,12 +7,12 @@
 <body>
   <ui:composition>
     <h3>Select one or more projects:</h3>
-    <h:dataTable border="1"
+    <h:dataTable class="table table-condensed table-hover"
       value="#{loginBean.poolPartyProjects}"
       var="projectEntry" binding="#{projectTable}">
       <h:column id="selectProjectColumn">
         <f:facet name="header">
-          <h:outputLink
+          <h:outputLink class="btn btn-sm btn-primary"
             onclick="toggleCheckboxes('projectSelection'); return false;">
             <h:outputText value="Select" />
           </h:outputLink>
