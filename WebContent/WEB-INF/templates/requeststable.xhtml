@@ -32,7 +32,7 @@
                onclick="toggle_sparql('sparql_#{requestsTable.rowIndex}'); return false;" />
         <h:panelGroup value="#{requestEntry.sparql}" style="display: none"
           styleClass="sparql_#{requestsTable.rowIndex}">
-          <br />
+          <br /><p />
           <pre><h:outputText value="#{requestEntry.sparql}" /></pre>
         </h:panelGroup>
       </h:column>
