@@ -61,7 +61,7 @@ Modified by ANDS for Editor Admin Tool.
     <div>
       <h4>Variable Bindings Result</h4>
 
-      <table class="table table-condensed table-hover">
+      <table class="table table-condensed table-striped">
 	<xsl:text>
 	</xsl:text>
   <thead>
