@@ -249,10 +249,12 @@
   <!-- Dangling concepts -->
 
   <request>
-    <title><![CDATA[Show dangling SKOS concepts based on <code>skos:broader</code>/<code>skos:topConceptOf</code>
+    <title><![CDATA[Show dangling SKOS concepts based on
+      <code>skos:broader</code>/<code>skos:topConceptOf</code>
       (LIMIT 50).
       This is the wrong answer for PoolParty, unless you have all instances of
-      <code>skos:broader</code>/<code>skos:narrower</code> and <code>skos:hasTopConcept</code>/<code>skos:topConceptOf</code>
+      <code>skos:broader</code>/<code>skos:narrower</code> and
+      <code>skos:hasTopConcept</code>/<code>skos:topConceptOf</code>
       correctly paired up.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
@@ -301,7 +303,8 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[<strong>WARNING:</strong> This update is a work in progress.
+    <title><![CDATA[<strong>WARNING:</strong> This update is a work
+      in progress.
       Delete dangling SKOS concepts based on
       <code>skos:narrower</code>/<code>skos:hasTopConcept</code>.
       This update may not complete on large vocabularies.]]></title>
@@ -322,7 +325,8 @@
   <!-- Deprecated resources -->
 
   <request>
-    <title><![CDATA[Show <code>owl:deprecated</code> resources (LIMIT 50).]]></title>
+    <title><![CDATA[Show <code>owl:deprecated</code> resources
+      (LIMIT 50).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -337,7 +341,8 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Show <code>owl:deprecated</code> resources (no LIMIT).]]></title>
+    <title><![CDATA[Show <code>owl:deprecated</code> resources
+      (no LIMIT).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -353,7 +358,8 @@
 
   <request>
     <title><![CDATA[Show resources that are <em>both</em>
-      <code>skos:Concept</code> and <code>owl:deprecated</code> (LIMIT 50).]]></title>
+      <code>skos:Concept</code> and <code>owl:deprecated</code>
+      (LIMIT 50).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -371,7 +377,8 @@
   </request>
   <request>
     <title><![CDATA[Show resources that are <em>both</em>
-      <code>skos:Concept</code> and <code>owl:deprecated</code> (no LIMIT).]]></title>
+      <code>skos:Concept</code> and <code>owl:deprecated</code>
+      (no LIMIT).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
@@ -387,9 +394,12 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Remove the <code>owl:deprecated</code> property from all resources
-      that are <em>both</em> <code>skos:Concept</code> and <code>owl:deprecated</code>. Remove
-      the <code>rdfs:label</code> property for these resources, as long as they also
+    <title><![CDATA[Remove the <code>owl:deprecated</code> property
+      from all resources
+      that are <em>both</em> <code>skos:Concept</code> and
+      <code>owl:deprecated</code>. Remove
+      the <code>rdfs:label</code> property for these resources,
+      as long as they also
       have a <code>skos:prefLabel</code>.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
@@ -419,7 +429,8 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Show resources that are <code>owl:deprecated</code> but not also
+    <title><![CDATA[Show resources that are <code>owl:deprecated</code>
+      but not also
       SKOS concepts, with all their properties (LIMIT 50).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
@@ -435,7 +446,8 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Show resources that are <code>owl:deprecated</code> but not also
+    <title><![CDATA[Show resources that are <code>owl:deprecated</code>
+      but not also
       SKOS concepts, with all their properties (no LIMIT).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
@@ -450,7 +462,8 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Remove resources that are <code>owl:deprecated</code> but not also
+    <title><![CDATA[Remove resources that are <code>owl:deprecated</code>
+      but not also
       SKOS concepts, with all their properties.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
@@ -466,5 +479,23 @@
     }
     ]]></sparql>
   </request>
+
+  <!-- Malformed IRIs -->
+
+  <request>
+    <title><![CDATA[Show triples that include an IRI containing whitespace
+      (LIMIT 50).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    SELECT ?s ?p ?o {
+      ?s ?p ?o
+      FILTER((isIRI(?s) && REGEX(STR(?s),"\\p{Z}")) ||
+      (isIRI(?p) && REGEX(STR(?p),"\\p{Z}")) ||
+      (isIRI(?o) && REGEX(STR(?o),"\\p{Z}")))
+    }
+    LIMIT 50
+    ]]></sparql>
+  </request>
+
 
 </requests>
