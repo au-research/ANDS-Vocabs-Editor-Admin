@@ -2,3 +2,5 @@
 /build/
 /tomcatlib/
 /vocabeditoradmin.war
+/conf/editoradmin.properties
+/conf/requests.xml
