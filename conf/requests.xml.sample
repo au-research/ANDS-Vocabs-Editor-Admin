@@ -484,7 +484,9 @@
 
   <request>
     <title><![CDATA[Show triples that include an IRI containing whitespace
-      (LIMIT 50).]]></title>
+      (LIMIT 50). (The presence of whitespace will prevent the vocabulary
+      from being correctly imported into the ANDS Vocabulary portal and
+      repository.)]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     SELECT ?s ?p ?o {
