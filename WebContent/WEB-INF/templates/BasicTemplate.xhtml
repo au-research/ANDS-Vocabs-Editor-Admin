@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title><ui:insert name="title">ANDS Vocabularies Editor Administration</ui:insert></title>
+<!-- Bootstrap -->
+<h:outputStylesheet library="css" name="bootstrap.min.css" />
+</h:head>
+
+<body>
+  <ui:debug hotkey="x"
+    rendered="#{initParam['javax.faces.PROJECT_STAGE'] eq 'Development'}" />
+
+  <div id="header">
+    <ui:insert name="header">
+      <ui:include src="/WEB-INF/templates/header.xhtml" />
+    </ui:insert>
+  </div>
+
+
+  <div class="container" id="content">
+    <ui:insert name="content">
+    </ui:insert>
+  </div>
+
+  <div id="footer">
+    <ui:insert name="footer">
+      <ui:include src="/WEB-INF/templates/footer.xhtml" />
+    </ui:insert>
+  </div>
+
+</body>
+
+</html>

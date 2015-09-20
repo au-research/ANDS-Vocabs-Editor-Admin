@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE div PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core">
+<body>
+  <ui:composition>
+    <h3>Select one or more operations:</h3>
+    <h:dataTable class="table table-condensed table-hover"
+      value="#{loginBean.poolPartyRequests}"
+      var="requestEntry" binding="#{requestsTable}">
+      <h:column id="selectRequestColumn">
+        <h:selectBooleanCheckbox styleClass="requestSelection"
+          value="#{loginBean.selectedPoolPartyRequests[requestsTable.rowIndex]}" />
+      </h:column>
+      <h:column id="requestTypeColumn">
+        <f:facet name="header">
+          <h:outputText value="Type" />
+        </f:facet>
+        <h:outputText value="#{requestEntry.type}" />
+      </h:column>
+      <h:column id="requestTitleColumn">
+        <f:facet name="header">
+          <h:outputText value="Title" />
+        </f:facet>
+        <span style="margin-right: 1.5em">
+          <ui:remove><!-- Use escape="false" here to allow titles to contain HTML tags. --></ui:remove>
+          <h:outputText value="#{requestEntry.title}" escape="false" />
+        </span>
+        <h:button class="btn btn-xs btn-info" value="Show/hide SPARQL"
+               onclick="toggle_sparql('sparql_#{requestsTable.rowIndex}'); return false;" />
+        <h:panelGroup value="#{requestEntry.sparql}" style="display: none"
+          styleClass="sparql_#{requestsTable.rowIndex}">
+          <br /><p />
+          <pre><h:outputText value="#{requestEntry.sparql}" /></pre>
+        </h:panelGroup>
+      </h:column>
+    </h:dataTable>
+    <p>(Your query/update not listed here? Send your suggestion to
+      <h:outputLink target="_blank"
+       value="mailto:services@ands.org.au?subject=Vocabs Editor Admin Tool suggestion for query/update">services@ands.org.au</h:outputLink>.)</p>
+  </ui:composition>
+</body>
+</html>

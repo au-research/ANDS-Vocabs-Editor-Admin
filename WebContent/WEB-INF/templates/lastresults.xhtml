@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE div PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:ui="http://java.sun.com/jsf/facelets"
+  xmlns:f="http://java.sun.com/jsf/core">
+<body>
+  <ui:composition>
+    <ui:fragment rendered="#{not empty loginBean.lastResults}">
+      <div>
+        <h2>Results</h2>
+        <h:form>
+          <ui:repeat var="item" value="#{loginBean.lastResults}">
+            <h3>
+              Project:
+              <h:outputText value="#{item.project.title}" />
+            </h3>
+            <h4>
+              Request:
+              <ui:remove><!-- Use escape="false" here to allow titles to contain HTML tags. --></ui:remove>
+              <h:outputText value="#{item.request.title}" escape="false"/>
+            </h4>
+            <ui:fragment rendered="#{item.type eq 'Query' and item.successful}">
+              <h:commandLink class="btn btn-sm btn-info" value="Download SPARQL Results Document"
+                action="#{item.sparqlResultDownload()}" />
+              <h:outputText value="#{item.sparqlResultAsXHTML}"
+                escape="false" />
+            </ui:fragment>
+            <h:outputText rendered="#{item.type eq 'Update' and item.successful}"
+              value="Result: #{item.updateResult}" escape="false" />
+            <h:outputText rendered="#{not item.successful}"
+              value="There was an error processing this request." escape="false" />
+          </ui:repeat>
+        </h:form>
+      </div>
+    </ui:fragment>
+  </ui:composition>
+</body>
+</html>

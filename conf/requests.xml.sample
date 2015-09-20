@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE requests>
+<requests>
+
+  <!-- skos:inScheme -->
+
+  <request>
+    <title><![CDATA[Show SKOS concepts without a <code>skos:inScheme</code> property (LIMIT 50).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI ?prefLabel {
+      ?Concept_IRI a skos:Concept
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
+      FILTER NOT EXISTS { ?Concept_IRI skos:inScheme ?o }
+    }
+    ORDER BY ?Concept_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Add a <code>skos:inScheme</code> property to all SKOS concepts
+      that don't already have one.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    INSERT {
+      ?s skos:inScheme ?scheme
+    }
+    WHERE {
+      ?s a skos:Concept .
+      ?s skos:broader*/skos:topConceptOf ?scheme
+      FILTER NOT EXISTS { ?s skos:inScheme ?o }
+    }
+    ]]></sparql>
+  </request>
+
+  <!-- Bad mix of skos:topConceptOf and skos:broader -->
+  <request>
+    <title><![CDATA[Show SKOS concepts that have <em>both</em>
+      <code>skos:topConceptOf</code> and <code>skos:broader</code> properties.]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI ?prefLabel ?Broader_IRI ?Broader_prefLabel {
+      ?Concept_IRI a skos:Concept .
+      ?Concept_IRI skos:topConceptOf ?scheme .
+      ?Concept_IRI skos:broader ?Broader_IRI .
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
+      OPTIONAL { ?Broader_IRI skos:prefLabel ?Broader_prefLabel }
+    }
+    ORDER BY ?Concept_IRI
+  ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Remove the <code>skos:topConceptOf</code> property from SKOS concepts
+      that have <em>both</em> <code>skos:topConceptOf</code> and <code>skos:broader</code> properties.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    DELETE {
+      ?Concept_IRI skos:topConceptOf ?scheme .
+    }
+    WHERE {
+      ?Concept_IRI a skos:Concept .
+      ?Concept_IRI skos:topConceptOf ?scheme .
+      ?Concept_IRI skos:broader ?Broader_IRI .
+    }
+  ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Show SKOS concepts that have either a
+      <code>skos:topConceptOf</code> or <code>skos:hasTopConcept</code>
+      property and that are narrower than another
+      concept (expressed using <em>either</em> <code>skos:narrower</code> or <code>skos:broader</code>)
+      which is also labelled as a top concept
+      (<em>either</em> with <code>skos:topConceptOf</code> or <code>skos:hasTopConcept</code>).
+      This shows the concepts (in the ‘Concept IRI’ column of the result) that will have their <code>skos:topConceptOf</code> and
+      <code>skos:hasTopConcept</code> properties deleted by the following update.]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT DISTINCT ?Concept_IRI ?Broader_IRI {
+      ?Concept_IRI a skos:Concept .
+      { ?Concept_IRI skos:topConceptOf ?scheme }
+        UNION
+      { ?scheme skos:hasTopConcept ?Concept_IRI }
+      ?Broader_IRI a skos:Concept
+      { ?Broader_IRI skos:topConceptOf ?scheme }
+        UNION
+      { ?scheme skos:hasTopConcept ?Broader_IRI }
+      { ?Concept_IRI skos:broader ?Broader_IRI }
+        UNION
+      { ?Broader_IRI skos:narrower ?Concept_IRI }
+    }
+  ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Remove <code>skos:topConceptOf</code> and <code>skos:hasTopConcept</code>
+      properties from SKOS concepts that are narrower than another
+      concept (expressed using <em>either</em> <code>skos:narrower</code> or <code>skos:broader</code>)
+      which is also labelled as a top concept
+      (<em>either</em> with <code>skos:topConceptOf</code> or <code>skos:hasTopConcept</code>).
+      <strong>WARNING:</strong> this can make the narrower concept seem
+      to disappear from PoolParty if it is only
+      linked in the hierarchy using <code>skos:broader</code>. Please make use of the Query
+      "Show SKOS concept pairs that are related with <em>either</em>
+      <code>skos:broader</code> or <code>skos:narrower</code> <em>but not both</em>" and the
+      corresponding Update if needed, before using this update.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    DELETE {
+      ?Concept_IRI skos:topConceptOf ?scheme .
+      ?scheme skos:hasTopConcept ?Concept_IRI .
+    }
+    WHERE {
+      ?Concept_IRI a skos:Concept .
+      { ?Concept_IRI skos:topConceptOf ?scheme }
+        UNION
+      { ?scheme skos:hasTopConcept ?Concept_IRI }
+      ?Broader_IRI a skos:Concept
+      { ?Broader_IRI skos:topConceptOf ?scheme }
+        UNION
+      { ?scheme skos:hasTopConcept ?Broader_IRI }
+      { ?Concept_IRI skos:broader ?Broader_IRI }
+        UNION
+      { ?Broader_IRI skos:narrower ?Concept_IRI }
+    }
+  ]]></sparql>
+  </request>
+
+
+  <!-- Unbalanced hasTopConcept/topConceptOf -->
+
+  <request>
+    <title><![CDATA[Show SKOS concept scheme/top concept pairs that are related
+      with <em>either</em> <code>skos:hasTopConcept</code> or <code>skos:topConceptOf</code>
+      <em>but not both</em> (LIMIT 50).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?ConceptScheme_IRI ?Concept_IRI ?Concept_prefLabel ?Missing_property {
+      ?ConceptScheme_IRI a skos:ConceptScheme .
+      ?Concept_IRI a skos:Concept .
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?Concept_prefLabel }
+      {
+        ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
+        BIND ("skos:topConceptOf" AS ?Missing_property)
+        FILTER NOT EXISTS { ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI }
+      } UNION
+      {
+        ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
+        BIND ("skos:hasTopConcept" AS ?Missing_property)
+        FILTER NOT EXISTS { ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI }
+      }
+    }
+    ORDER BY ?ConceptScheme_IRI ?Concept_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Add missing <code>skos:hasTopConcept</code> and <code>skos:topConceptOf</code>
+      properties to cases where only one is already present. Do not run this
+      update if the Query "Show SKOS concepts that have <em>both</em>
+      <code>skos:topConceptOf</code> and <code>skos:broader</code> properties" returns
+      any results.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    INSERT {
+      ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
+    }
+    WHERE {
+      ?ConceptScheme_IRI a skos:ConceptScheme .
+      ?Concept_IRI a skos:Concept .
+      ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
+      FILTER NOT EXISTS { ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI }
+    } ;
+    INSERT {
+      ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
+    }
+    WHERE {
+      ?ConceptScheme_IRI a skos:ConceptScheme .
+      ?Concept_IRI a skos:Concept .
+      ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
+      FILTER NOT EXISTS { ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI }
+    }
+    ]]></sparql>
+  </request>
+
+  <!-- Unbalanced broader/narrower -->
+
+  <request>
+    <title><![CDATA[Show SKOS concept pairs that are related with <em>either</em>
+      <code>skos:broader</code> or <code>skos:narrower</code> <em>but not both</em> (LIMIT 50).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Broader_IRI ?Broader_prefLabel ?Narrower_IRI ?Narrower_prefLabel ?Missing_property {
+      ?Broader_IRI a skos:Concept .
+      ?Narrower_IRI a skos:Concept .
+      OPTIONAL { ?Broader_IRI skos:prefLabel ?Broader_prefLabel }
+      OPTIONAL { ?Narrower_IRI skos:prefLabel ?Narrower_prefLabel }
+      {
+        ?Broader_IRI skos:narrower ?Narrower_IRI
+        BIND ("skos:broader" AS ?Missing_property)
+        FILTER NOT EXISTS { ?Narrower_IRI skos:broader ?Broader_IRI }
+      } UNION
+      {
+        ?Narrower_IRI skos:broader ?Broader_IRI
+        BIND ("skos:narrower" AS ?Missing_property)
+        FILTER NOT EXISTS { ?Broader_IRI skos:narrower ?Narrower_IRI }
+      }
+    }
+    ORDER BY ?Concept_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Add missing <code>skos:broader</code> and <code>skos:narrower</code>
+      properties to cases where only one is already present.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    INSERT {
+      ?Narrower_IRI skos:broader ?Broader_IRI
+    }
+    WHERE {
+      ?Broader_IRI a skos:Concept .
+      ?Narrower_IRI a skos:Concept .
+      ?Broader_IRI skos:narrower ?Narrower_IRI
+      FILTER NOT EXISTS { ?Narrower_IRI skos:broader ?Broader_IRI }
+    } ;
+    INSERT {
+      ?Broader_IRI skos:narrower ?Narrower_IRI
+    }
+    WHERE {
+      ?Broader_IRI a skos:Concept .
+      ?Narrower_IRI a skos:Concept .
+      ?Narrower_IRI skos:broader ?Broader_IRI
+      FILTER NOT EXISTS { ?Broader_IRI skos:narrower ?Narrower_IRI }
+    }
+    ]]></sparql>
+  </request>
+
+
+
+  <!-- Dangling concepts -->
+
+  <request>
+    <title><![CDATA[Show dangling SKOS concepts based on
+      <code>skos:broader</code>/<code>skos:topConceptOf</code>
+      (LIMIT 50).
+      This is the wrong answer for PoolParty, unless you have all instances of
+      <code>skos:broader</code>/<code>skos:narrower</code> and
+      <code>skos:hasTopConcept</code>/<code>skos:topConceptOf</code>
+      correctly paired up.]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI ?prefLabel {
+      ?Concept_IRI a skos:Concept
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
+      FILTER NOT EXISTS { ?Concept_IRI skos:broader*/skos:topConceptOf ?scheme }
+    }
+    ORDER BY ?Concept_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Show dangling SKOS concepts based on
+      skos:narrower/skos:hasTopConcept (LIMIT 50).
+      This is the correct answer for PoolParty, but may not complete on
+      large vocabularies.]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI ?prefLabel {
+      ?Concept_IRI a skos:Concept
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
+      FILTER NOT EXISTS { ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme }
+      # FILTER NOT EXISTS { ?scheme skos:hasTopConcept/skos:narrower* ?Concept_IRI  }
+    }
+    ORDER BY ?Concept_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Show dangling SKOS concepts based on
+      <code>skos:narrower</code>/<code>skos:hasTopConcept</code> (no LIMIT):
+      this is the correct answer for PoolParty, but may not complete on
+      large vocabularies.]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Concept_IRI ?prefLabel {
+      ?Concept_IRI a skos:Concept
+      OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
+      FILTER NOT EXISTS { ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme }
+    }
+    ORDER BY ?Concept_IRI
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[<strong>WARNING:</strong> This update is a work
+      in progress.
+      Delete dangling SKOS concepts based on
+      <code>skos:narrower</code>/<code>skos:hasTopConcept</code>.
+      This update may not complete on large vocabularies.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    DELETE {
+      ?Concept_IRI ?p ?o
+    }
+    WHERE {
+      ?Concept_IRI a skos:Concept .
+      ?Concept_IRI ?p ?o
+      FILTER NOT EXISTS { ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme }
+    }
+    ]]></sparql>
+  </request>
+
+  <!-- Deprecated resources -->
+
+  <request>
+    <title><![CDATA[Show <code>owl:deprecated</code> resources
+      (LIMIT 50).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?rdfs_Label {
+      ?Resource_IRI owl:deprecated true
+      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    }
+    ORDER BY ?Resource_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Show <code>owl:deprecated</code> resources
+      (no LIMIT).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?rdfs_Label {
+      ?Resource_IRI owl:deprecated true
+      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    }
+    ORDER BY ?Resource_IRI
+    ]]></sparql>
+  </request>
+
+  <request>
+    <title><![CDATA[Show resources that are <em>both</em>
+      <code>skos:Concept</code> and <code>owl:deprecated</code>
+      (LIMIT 50).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?prefLabel ?rdfs_Label {
+      ?Resource_IRI a skos:Concept .
+      ?Resource_IRI owl:deprecated true
+      OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
+      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    }
+    ORDER BY ?Resource_IRI
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Show resources that are <em>both</em>
+      <code>skos:Concept</code> and <code>owl:deprecated</code>
+      (no LIMIT).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?prefLabel ?rdfs_Label {
+      ?Resource_IRI a skos:Concept .
+      ?Resource_IRI owl:deprecated true
+      OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
+      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    }
+    ORDER BY ?Resource_IRI
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Remove the <code>owl:deprecated</code> property
+      from all resources
+      that are <em>both</em> <code>skos:Concept</code> and
+      <code>owl:deprecated</code>. Remove
+      the <code>rdfs:label</code> property for these resources,
+      as long as they also
+      have a <code>skos:prefLabel</code>.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    # Delete the rdfs:label first, separately, because its deletion
+    # is conditional on the presence of a skos:prefLabel ...
+    DELETE {
+      ?Resource_IRI rdfs:label ?label
+    }
+    WHERE {
+      ?Resource_IRI a skos:Concept .
+      ?Resource_IRI owl:deprecated true .
+      ?Resource_IRI rdfs:label ?label .
+      ?Resource_IRI skos:prefLabel ?prefLabel
+    } ;
+    # ... whereas, deletion of the owl:deprecated property is not
+    # conditional in the same way.
+    DELETE {
+      ?Resource_IRI owl:deprecated true
+    }
+    WHERE {
+      ?Resource_IRI a skos:Concept .
+      ?Resource_IRI owl:deprecated true
+    }
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Show resources that are <code>owl:deprecated</code>
+      but not also
+      SKOS concepts, with all their properties (LIMIT 50).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?Predicate ?Object
+    WHERE {
+      ?Resource_IRI owl:deprecated true .
+      ?Resource_IRI ?Predicate ?Object .
+      FILTER NOT EXISTS { ?Resource_IRI a skos:Concept }
+    }
+    LIMIT 50
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Show resources that are <code>owl:deprecated</code>
+      but not also
+      SKOS concepts, with all their properties (no LIMIT).]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?Predicate ?Object
+    WHERE {
+      ?Resource_IRI owl:deprecated true .
+      ?Resource_IRI ?Predicate ?Object .
+      FILTER NOT EXISTS { ?Resource_IRI a skos:Concept }
+    }
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Remove resources that are <code>owl:deprecated</code>
+      but not also
+      SKOS concepts, with all their properties.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    DELETE {
+      ?Resource_IRI ?p ?o
+    }
+    WHERE {
+      ?Resource_IRI owl:deprecated true .
+      ?Resource_IRI ?p ?o .
+      FILTER NOT EXISTS { ?Resource_IRI a skos:Concept }
+    }
+    ]]></sparql>
+  </request>
+
+  <!-- Malformed IRIs -->
+
+  <request>
+    <title><![CDATA[Show triples that include an IRI containing whitespace
+      (LIMIT 50). (The presence of whitespace will prevent the vocabulary
+      from being correctly imported into the ANDS Vocabulary portal and
+      repository.)]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    SELECT ?s ?p ?o {
+      ?s ?p ?o
+      FILTER((isIRI(?s) && REGEX(STR(?s),"\\p{Z}")) ||
+      (isIRI(?p) && REGEX(STR(?p),"\\p{Z}")) ||
+      (isIRI(?o) && REGEX(STR(?o),"\\p{Z}")))
+    }
+    LIMIT 50
+    ]]></sparql>
+  </request>
+
+
+</requests>
