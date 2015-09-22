@@ -70,10 +70,11 @@ public class LoginBean implements Serializable {
     }
 
     /** Set the username.
-     * @param aUsername the username to set
+     * @param aUsername The username to set. It will be trimmed of
+     * leading and trailing whitespace.
      */
     public final void setUsername(final String aUsername) {
-        username = aUsername;
+        username = aUsername.trim();
     }
 
     /** Get the password.
@@ -84,10 +85,11 @@ public class LoginBean implements Serializable {
     }
 
     /** Set the password.
-     * @param aPassword the password to set
+     * @param aPassword The password to set. It will be trimmed of
+     * leading and trailing whitespace.
      */
     public final void setPassword(final String aPassword) {
-        password = aPassword;
+        password = aPassword.trim();
     }
 
     /** Get the user's PoolParty projects. The array is sorted by title.
