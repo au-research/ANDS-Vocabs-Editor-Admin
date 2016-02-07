@@ -4,6 +4,8 @@
   xmlns:ui="http://java.sun.com/jsf/facelets"
   xmlns:h="http://java.sun.com/jsf/html">
 <h:head>
+<!-- Redirect to login page after session timeout. -->
+<meta http-equiv="refresh" content="#{facesContext.externalContext.sessionMaxInactiveInterval};url=#{request.contextPath}/faces/sessiontimeout.xhtml" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title><ui:insert name="title">ANDS Vocabularies Editor Administration</ui:insert></title>
