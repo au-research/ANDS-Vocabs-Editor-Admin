@@ -43,6 +43,10 @@ public class LoginBean implements Serializable {
     /** Password. */
     private String password;
 
+    /** Is the user successfully logged in with
+     *  a valid username and password? */
+    private Boolean loggedIn = false;
+
     /** PoolParty projects available to this user. */
     private PoolPartyProject[] poolPartyProjects;
 
@@ -65,7 +69,7 @@ public class LoginBean implements Serializable {
     /** Get the username.
      * @return the username
      */
-    public final String getUsername() {
+    public String getUsername() {
         return username;
     }
 
@@ -73,14 +77,14 @@ public class LoginBean implements Serializable {
      * @param aUsername The username to set. It will be trimmed of
      * leading and trailing whitespace.
      */
-    public final void setUsername(final String aUsername) {
+    public void setUsername(final String aUsername) {
         username = aUsername.trim();
     }
 
     /** Get the password.
      * @return the password
      */
-    public final String getPassword() {
+    public String getPassword() {
         return password;
     }
 
@@ -88,21 +92,21 @@ public class LoginBean implements Serializable {
      * @param aPassword The password to set. It will be trimmed of
      * leading and trailing whitespace.
      */
-    public final void setPassword(final String aPassword) {
+    public void setPassword(final String aPassword) {
         password = aPassword.trim();
     }
 
     /** Get the user's PoolParty projects. The array is sorted by title.
      * @return the poolPartyProjects
      */
-    public final PoolPartyProject[] getPoolPartyProjects() {
+    public PoolPartyProject[] getPoolPartyProjects() {
         return poolPartyProjects;
     }
 
     /** Set the user's PoolParty projects. The array will be sorted by title.
      * @param thePoolPartyProjects the poolPartyProjects to set
      */
-    public final void setPoolPartyProjects(
+    public void setPoolPartyProjects(
             final PoolPartyProject[] thePoolPartyProjects) {
         poolPartyProjects = thePoolPartyProjects;
     }
@@ -110,7 +114,7 @@ public class LoginBean implements Serializable {
     /** Get the selected PoolParty projects.
      * @return the selected projects
      */
-    public final Boolean[] getSelectedPoolPartyProjects() {
+    public Boolean[] getSelectedPoolPartyProjects() {
         return selectedPoolPartyProjects;
     }
 
@@ -118,7 +122,7 @@ public class LoginBean implements Serializable {
      * @param aSelectedPoolPartyProjects
      *            the selected projects to set
      */
-    public final void setSelectedPoolPartyProjects(
+    public void setSelectedPoolPartyProjects(
             final Boolean[] aSelectedPoolPartyProjects) {
         selectedPoolPartyProjects = aSelectedPoolPartyProjects;
     }
@@ -126,14 +130,14 @@ public class LoginBean implements Serializable {
     /** Get the user's PoolParty requests. The array is sorted by title.
      * @return the poolPartyRequests
      */
-    public final PoolPartyRequest[] getPoolPartyRequests() {
+    public PoolPartyRequest[] getPoolPartyRequests() {
         return poolPartyRequests;
     }
 
     /** Set the user's PoolParty requests. The array will be sorted by title.
      * @param thePoolPartyRequests the poolPartyRequests to set
      */
-    public final void setPoolPartyRequests(
+    public void setPoolPartyRequests(
             final PoolPartyRequest[] thePoolPartyRequests) {
         poolPartyRequests = thePoolPartyRequests;
     }
@@ -141,14 +145,14 @@ public class LoginBean implements Serializable {
     /** Get the selected PoolParty requests.
      * @return the selected requests
      */
-    public final Boolean[] getSelectedPoolPartyRequests() {
+    public Boolean[] getSelectedPoolPartyRequests() {
         return selectedPoolPartyRequests;
     }
 
     /** Set the selected PoolParty requests.
      * @param aSelectedPoolPartyRequests the selected requests to set
      */
-    public final void setSelectedPoolPartyRequests(
+    public void setSelectedPoolPartyRequests(
             final Boolean[] aSelectedPoolPartyRequests) {
         selectedPoolPartyRequests = aSelectedPoolPartyRequests;
     }
@@ -156,14 +160,14 @@ public class LoginBean implements Serializable {
     /** Get the last results of request processing.
      * @return the last results
      */
-    public final ArrayList<RequestResponse> getLastResults() {
+    public ArrayList<RequestResponse> getLastResults() {
         return lastResults;
     }
 
     /** Set the last results of request processing.
      * @param aLastResults the last results to set
      */
-    public final void setLastResults(
+    public void setLastResults(
             final ArrayList<RequestResponse> aLastResults) {
         lastResults = aLastResults;
     }
@@ -178,30 +182,40 @@ public class LoginBean implements Serializable {
         selectedPoolPartyRequests = new Boolean[poolPartyRequests.length];
     }
 
+    /** Is the user logged in?
+     * @return True, iff the user has entered a correct username
+     * and password.
+     */
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
     /** Login. Check the user credentials. If successful, poolPartyProjects is
      * initialized with the user's projects, and selectedPoolPartyProjects is
      * initialized as an array of the same size, with false in all entries.
      * @return The name of the action that goes to the home page.
      */
-    public final String login() {
+    public String login() {
         poolPartyProjects = PoolPartyToolkit.getProjects(this);
         if (poolPartyProjects == null) {
             /* Invalid login. */
             return ToolConstants.HOME_ACTION;
         }
+        loggedIn = true;
         selectedPoolPartyProjects = new Boolean[poolPartyProjects.length];
         // Reset all other properties.
         Arrays.fill(selectedPoolPartyRequests, false);
         Arrays.sort(poolPartyProjects);
         lastResults = null;
         LOGGER.debug("Login by user: " + username);
+        LOGGER.debug("isLoggedIn() now returns: " + isLoggedIn());
         return ToolConstants.WELCOME_ACTION;
     }
 
     /** Process the user's request.
      * @return The name of the resulting action.
      */
-    public final String processRequest() {
+    public String processRequest() {
         // This level of logging was useful to get the JSF pages
         // up and running.
         // There is now additional logging in
@@ -227,8 +241,9 @@ public class LoginBean implements Serializable {
     /** Logout. Invalidate the user's session.
      * @return The name of the action that goes to the home page.
      */
-    public final String logout() {
+    public String logout() {
         LOGGER.debug("Logout by user: " + username);
+        loggedIn = false;
         username = "";
         password = "";
         poolPartyProjects = null;
