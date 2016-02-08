@@ -12,6 +12,9 @@
   <property name="jar" value="vocabeditoradmin.jar" />
   <property name="war" value="vocabeditoradmin.war" />
 
+  <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
+    classpath="libdev/checkstyle-6.14.1/checkstyle-6.14.1-all.jar" />
+
   <target name="clean">
     <delete dir="${build}" />
     <delete file="${jar}" />
@@ -23,11 +26,20 @@
     <!-- <fileset dir="tomcatlib" includes="**/*.jar" /> -->
   </path>
 
+  <path id="dev-compile-main.classpath">
+    <fileset dir="lib" includes="**/*.jar" />
+    <fileset dir="libdev" includes="**/*.jar" />
+    <fileset dir="tomcatlib" includes="**/*.jar" />
+  </path>
+
   <target name="compile-main">
     <mkdir dir="${build}" />
     <javac debug="true" debuglevel="${debuglevel}" destdir="${build}" includeantruntime="false" source="${source}" target="${target}">
       <src path="src/main/java" />
-      <!-- <src path="src/test/java" /> -->
+      <!-- Don't include test classes. For now, if you want to use
+           the test classes, use the project in Eclipse.
+      <src path="src/test/java" />
+      -->
       <classpath refid="compile-main.classpath" />
     </javac>
   </target>
@@ -125,6 +137,44 @@
       <arg value="--assume-unchanged" />
       <arg value="${conf}/version.properties" />
     </exec>
+  </target>
+
+  <target name="javadoc">
+    <javadoc sourcepath="src/main/java;src/test/java"
+             destdir="doc/api"
+             classpathref="dev-compile-main.classpath"
+             linksource="true"
+             includenosourcepackages="true"
+             >
+    </javadoc>
+  </target>
+
+
+  <target name="checkstyle"
+          description="Generates a report of code convention violations.">
+
+    <!-- Be very picky: fail even on a single warning. -->
+    <checkstyle config="ands-checkstyle.xml"
+        maxWarnings="0">
+      <!-- Options that could be added to checkstyle element: -->
+      <!--    failureProperty="checkstyle.failure" -->
+      <!--    failOnViolation="false" -->
+      <!-- classpathref seems not to be needed: -->
+      <!--    classpathref="compile-main.classpath" -->
+      <!-- Possible future work: write report to a file: -->
+      <!--  <formatter type="xml" tofile="checkstyle_report.xml"/> -->
+      <!-- Define "samedir" property as used in the config. (The
+           "samedir" property is an Eclipse-CS thing. -->
+      <property key="samedir" value="." />
+      <fileset dir="src/main" includes="**/*.java"/>
+    </checkstyle>
+
+    <!-- Possible future work: if generating a report, make a pretty
+         version. -->
+    <!--  <style in="checkstyle_report.xml"
+                 out="checkstyle_report.html"
+                 style="checkstyle.xsl"/> -->
+
   </target>
 
 </project>
