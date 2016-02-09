@@ -209,7 +209,7 @@ public class LoginBean implements Serializable {
         lastResults = null;
         LOGGER.debug("Login by user: " + username);
         LOGGER.debug("isLoggedIn() now returns: " + isLoggedIn());
-        return ToolConstants.WELCOME_ACTION;
+        return ToolConstants.WELCOME_ACTION + ToolConstants.REDIRECT_ACTION;
     }
 
     /** Process the user's request.
