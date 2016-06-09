@@ -23,7 +23,7 @@
 
   <path id="compile-main.classpath">
     <fileset dir="lib" includes="**/*.jar" />
-    <!-- <fileset dir="tomcatlib" includes="**/*.jar" /> -->
+    <fileset dir="tomcatlib" includes="**/*.jar" />
   </path>
 
   <path id="dev-compile-main.classpath">
