@@ -429,6 +429,49 @@
     ]]></sparql>
   </request>
   <request>
+    <title><![CDATA[Show resources that are <em>both</em>
+      <code>skos:ConceptScheme</code> and <code>owl:deprecated</code>
+      (no LIMIT). If this query returns any results, it is recommended
+      that you run the query "Show resources that are
+      <code>owl:deprecated</code> but not also
+      SKOS concepts, with all their properties (no LIMIT)" before deciding
+      whether to run the following update.]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?Resource_IRI ?prefLabel ?rdfs_Label {
+      ?Resource_IRI a skos:ConceptScheme .
+      ?Resource_IRI owl:deprecated true
+      OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
+      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    }
+    ORDER BY ?Resource_IRI
+    ]]></sparql>
+  </request>
+  <request>
+    <title><![CDATA[Remove the <code>owl:deprecated</code> property
+      from all resources
+      that are <em>both</em> <code>skos:ConceptScheme</code> and
+      <code>owl:deprecated</code>, as long as they also
+      have an <code>rdfs:label</code>.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    DELETE {
+      ?Resource_IRI owl:deprecated true
+    }
+    WHERE {
+      ?Resource_IRI a skos:ConceptScheme .
+      ?Resource_IRI rdfs:label ?label .
+      ?Resource_IRI owl:deprecated true
+    }
+    ]]></sparql>
+  </request>
+  <request>
     <title><![CDATA[Show resources that are <code>owl:deprecated</code>
       but not also
       SKOS concepts, with all their properties (LIMIT 50).]]></title>
