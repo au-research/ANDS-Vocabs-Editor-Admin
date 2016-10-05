@@ -2,38 +2,40 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://java.sun.com/jsf/facelets"
-  xmlns:h="http://java.sun.com/jsf/html"
-  xmlns:f="http://java.sun.com/jsf/core">
+  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+  xmlns:h="http://xmlns.jcp.org/jsf/html"
+  xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-<ui:composition template="/WEB-INF/templates/BasicTemplate.xhtml">
+<f:view transient="true">
+  <ui:composition template="/WEB-INF/templates/BasicTemplate.xhtml">
 
-  <ui:define name="content">
-    <h:form class="form-horizontal">
-      <div class="form-group">
-        <h:outputLabel for="username" class="col-sm-2 control-label"
-          value="Username" />
-        <div class="col-sm-10">
-          <h:inputText class="form-control" id="username"
-            value="#{loginBean.username}" />
+    <ui:define name="content">
+      <h:form class="form-horizontal">
+        <div class="form-group">
+          <h:outputLabel for="username" class="col-sm-2 control-label"
+            value="Username" />
+          <div class="col-sm-10">
+            <h:inputText class="form-control" id="username"
+              value="#{loginBean.username}" />
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <h:outputLabel for="password" class="col-sm-2 control-label"
-          value="Password" />
-        <div class="col-sm-10">
-          <h:inputSecret class="form-control" id="password"
-            value="#{loginBean.password}" />
+        <div class="form-group">
+          <h:outputLabel for="password" class="col-sm-2 control-label"
+            value="Password" />
+          <div class="col-sm-10">
+            <h:inputSecret class="form-control" id="password"
+              value="#{loginBean.password}" />
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <h:commandButton class="btn btn-primary" value="Login"
-            action="#{loginBean.login}" />
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <h:commandButton class="btn btn-primary" value="Login"
+              action="#{loginBean.login}" />
+          </div>
         </div>
-      </div>
-    </h:form>
-  </ui:define>
+      </h:form>
+    </ui:define>
 
-</ui:composition>
+  </ui:composition>
+</f:view>
 </html>

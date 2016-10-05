@@ -20,12 +20,12 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+
 import au.org.ands.vocabs.editor.admin.bean.LoginBean;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyProject;
 import au.org.ands.vocabs.editor.admin.model.PoolPartyRequest;
 import au.org.ands.vocabs.editor.admin.model.RequestResponse;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 /** Toolkit for accessing PoolParty. */
 public final class PoolPartyToolkit {
@@ -186,7 +186,7 @@ public final class PoolPartyToolkit {
 
     /** Process the user's request.
      * @param loginBean The session bean with the request details.
-     * @return the The name of the action that goes to the home page.
+     * @return the The name of the action that goes to the logged-in page.
      */
     public static String processRequest(final LoginBean loginBean) {
         LOGGER.debug("Called processRequest");
@@ -246,7 +246,7 @@ public final class PoolPartyToolkit {
             }
         }
         loginBean.setLastResults(allResults);
-        return "welcome";
+        return ToolConstants.WELCOME_ACTION;
     }
 
 }

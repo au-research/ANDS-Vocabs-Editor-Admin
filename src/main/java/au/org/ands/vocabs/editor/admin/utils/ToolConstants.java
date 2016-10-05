@@ -11,6 +11,11 @@ public final class ToolConstants  {
     /** The name of the welcome action. */
     public static final String WELCOME_ACTION = "welcome";
 
+    /** JSF magic to force a redirect. Append this to the
+     * name of an action.
+     */
+    public static final String REDIRECT_ACTION = "?faces-redirect=true";
+
     /** The name of the query request type. */
     public static final String QUERY_TYPE = "Query";
 
