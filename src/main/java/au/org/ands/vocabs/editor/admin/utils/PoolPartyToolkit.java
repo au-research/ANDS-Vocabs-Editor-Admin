@@ -38,6 +38,20 @@ public final class PoolPartyToolkit {
     private static final Properties PROPS =
             ToolProperties.getProperties();
 
+    /** Regular expression defining the placeholder to use in queries
+     * and updates, to be replaced with
+     * the IRI of the named graph that contains the project's
+     * thesaurus data. The replacement text will include angle brackets;
+     * therefore, do not include them in the template. Sample uses within
+     * a query:
+     * <pre>
+     * SELECT ?s FROM #THESAURUS# WHERE { ?s ... }
+     * SELECT ?s FROM #THESAURUS/deprecated# WHERE { ?s ... }
+     * </pre>
+     * */
+    private static final String PROJECT_THESAURUS_DATA_GRAPH =
+            "#THESAURUS(/[^#]+)?#";
+
     /** Private constructor for a utility class. */
     private PoolPartyToolkit() {
     }
@@ -208,6 +222,7 @@ public final class PoolPartyToolkit {
                 continue;
             }
             PoolPartyProject project = poolPartyProjects[projectIndex];
+            String projectThesaurusGraph = getThesaurusGraph(project);
             for (int requestIndex = 0;
                     requestIndex < selectedPoolPartyRequests.length;
                     requestIndex++) {
@@ -217,6 +232,10 @@ public final class PoolPartyToolkit {
                 PoolPartyRequest request = poolPartyRequests[requestIndex];
                 String type = request.getType();
                 String sparql = request.getSparql();
+                // Replace occurrences of the thesaurus data graph placeholder
+                // within the template.
+                sparql = sparql.replaceAll(PROJECT_THESAURUS_DATA_GRAPH,
+                        projectThesaurusGraph);
                 LOGGER.debug("processRequest: user: " + loginBean.getUsername()
                         + ", project ID: " + project.getId()
                         + ", request: " + request.getTitle());
@@ -247,6 +266,20 @@ public final class PoolPartyToolkit {
         }
         loginBean.setLastResults(allResults);
         return ToolConstants.WELCOME_ACTION;
+    }
+
+    /** Get the IRI of the named graph containing the project's thesaurus data,
+     * with a substitution element $1 for a suffix.
+     * The result has surrounding angle brackets.
+     * The result of this method is intended to be used as the second parameter
+     * to the method {@link String#replaceAll(String, String)}, where
+     * the value of the second parameter contains one capturing group.
+     * @param project The PoolParty project definition.
+     * @return The IRI of the named graph, as a String containing $1.
+     *   Example: <code>&lt;http://path.to.api/1234/thesaurus$1&gt;</code>
+     */
+    private static String getThesaurusGraph(final PoolPartyProject project) {
+        return "<" + project.getUri() + "/thesaurus" + "$1" + ">";
     }
 
 }
