@@ -32,7 +32,9 @@
                onclick="toggle_sparql('sparql_#{requestsTable.rowIndex}'); return false;" />
         <h:panelGroup value="#{requestEntry.sparql}" style="display: none"
           styleClass="sparql_#{requestsTable.rowIndex}">
-          <br /><p />
+          <br /><p>Before execution, placedholder text
+          <code>#THESAURUS...#</code>
+          will be replaced with the IRI of the appropriate named graph.</p>
           <pre><h:outputText value="#{requestEntry.sparql}" /></pre>
         </h:panelGroup>
       </h:column>
