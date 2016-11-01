@@ -63,17 +63,17 @@ public final class PoolPartyToolkit {
      *         PoolPartyProject. */
     public static PoolPartyProject[] getProjects(
             final LoginBean loginBean) {
-        String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
-                + "api/projects/";
-
-        LOGGER.debug("Getting metadata from " + remoteUrl);
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTY_REMOTEURL);
 
         Client client = ClientBuilder.newClient();
         // Need to register the Jackson provider in order
         // to deserialize the JSON returned by PoolParty.
         client.register(JacksonJaxbJsonProvider.class);
 
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl)
+                .path("api/projects");
+        LOGGER.debug("Getting metadata from " + target.getUri());
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(loginBean.getUsername(),
                         loginBean.getPassword());
@@ -107,17 +107,13 @@ public final class PoolPartyToolkit {
             final LoginBean loginBean,
             final String uriSupplement,
             final String query) {
-        String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
-                + "sparql/" + uriSupplement;
-
-        LOGGER.debug("Running query: " + remoteUrl);
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTY_REMOTEURL);
 
         Client client = ClientBuilder.newClient();
-        // Need to register the Jackson provider in order
-        // to deserialize the JSON returned by PoolParty.
-//        client.register(JacksonJaxbJsonProvider.class);
-
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl)
+                .path("sparql").path(uriSupplement);
+        LOGGER.debug("Running query: " + target.getUri());
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(loginBean.getUsername(),
                         loginBean.getPassword());
@@ -157,17 +153,13 @@ public final class PoolPartyToolkit {
             final LoginBean loginBean,
             final String projectID,
             final String update) {
-        String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
-                + "api/projects/" + projectID + "/update";
-
-        LOGGER.debug("Running update: " + remoteUrl);
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTY_REMOTEURL);
 
         Client client = ClientBuilder.newClient();
-        // Need to register the Jackson provider in order
-        // to deserialize the JSON returned by PoolParty.
-//        client.register(JacksonJaxbJsonProvider.class);
-
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl)
+                .path("api/projects").path(projectID).path("update");
+        LOGGER.debug("Running update: " + target.getUri());
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(loginBean.getUsername(),
                         loginBean.getPassword());
