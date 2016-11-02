@@ -134,6 +134,8 @@ public final class PoolPartyToolkit {
         LOGGER.debug("runQuery response code: " + response.getStatus());
         if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
             // Query failed.
+            LOGGER.debug("runQuery response error data: "
+                    + response.readEntity(String.class));
             return null;
         }
 
@@ -165,11 +167,11 @@ public final class PoolPartyToolkit {
                         loginBean.getPassword());
         target.register(feature);
 
-        // Seem to need to set this "content-type" here.
-        // Not enough to set the Content-Type using request() below.
-
+        // Ask for JSON, in case there is an error.
+        // If you ask for plain text, and there is an error,
+        // you don't get any error message.
         Invocation.Builder invocationBuilder =
-                target.request(MediaType.TEXT_PLAIN_TYPE);
+                target.request(MediaType.APPLICATION_JSON);
 
         Response response = invocationBuilder.post(Entity.entity(update,
                 MediaType.TEXT_PLAIN));
@@ -177,6 +179,8 @@ public final class PoolPartyToolkit {
         LOGGER.debug("runUpdate response code: " + response.getStatus());
         if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
             // Update failed.
+            LOGGER.debug("runUpdate response error data: "
+                    + response.readEntity(String.class));
             return null;
         }
 
