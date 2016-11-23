@@ -5,11 +5,13 @@
   <!-- skos:inScheme -->
 
   <request>
-    <title><![CDATA[Show SKOS concepts without a <code>skos:inScheme</code> property (LIMIT 50).]]></title>
+    <title><![CDATA[Show SKOS concepts without a <code>skos:inScheme</code>
+      property (LIMIT 50).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Concept_IRI ?prefLabel {
+    SELECT ?Concept_IRI ?prefLabel
+    FROM #THESAURUS# {
       ?Concept_IRI a skos:Concept
       OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
       FILTER NOT EXISTS { ?Concept_IRI skos:inScheme ?o }
@@ -19,11 +21,12 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Add a <code>skos:inScheme</code> property to all SKOS concepts
-      that don't already have one.]]></title>
+    <title><![CDATA[Add a <code>skos:inScheme</code> property to all
+      SKOS concepts that don't already have one.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     INSERT {
       ?s skos:inScheme ?scheme
     }
@@ -38,11 +41,13 @@
   <!-- Bad mix of skos:topConceptOf and skos:broader -->
   <request>
     <title><![CDATA[Show SKOS concepts that have <em>both</em>
-      <code>skos:topConceptOf</code> and <code>skos:broader</code> properties.]]></title>
+      <code>skos:topConceptOf</code> and <code>skos:broader</code>
+      properties.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Concept_IRI ?prefLabel ?Broader_IRI ?Broader_prefLabel {
+    SELECT ?Concept_IRI ?prefLabel ?Broader_IRI ?Broader_prefLabel
+    FROM #THESAURUS# {
       ?Concept_IRI a skos:Concept .
       ?Concept_IRI skos:topConceptOf ?scheme .
       ?Concept_IRI skos:broader ?Broader_IRI .
@@ -53,11 +58,13 @@
   ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Remove the <code>skos:topConceptOf</code> property from SKOS concepts
-      that have <em>both</em> <code>skos:topConceptOf</code> and <code>skos:broader</code> properties.]]></title>
+    <title><![CDATA[Remove the <code>skos:topConceptOf</code> property from
+      SKOS concepts that have <em>both</em> <code>skos:topConceptOf</code>
+      and <code>skos:broader</code> properties.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     DELETE {
       ?Concept_IRI skos:topConceptOf ?scheme .
     }
@@ -72,15 +79,20 @@
     <title><![CDATA[Show SKOS concepts that have either a
       <code>skos:topConceptOf</code> or <code>skos:hasTopConcept</code>
       property and that are narrower than another
-      concept (expressed using <em>either</em> <code>skos:narrower</code> or <code>skos:broader</code>)
+      concept (expressed using <em>either</em> <code>skos:narrower</code> or
+      <code>skos:broader</code>)
       which is also labelled as a top concept
-      (<em>either</em> with <code>skos:topConceptOf</code> or <code>skos:hasTopConcept</code>).
-      This shows the concepts (in the ‘Concept IRI’ column of the result) that will have their <code>skos:topConceptOf</code> and
-      <code>skos:hasTopConcept</code> properties deleted by the following update.]]></title>
+      (<em>either</em> with <code>skos:topConceptOf</code> or
+      <code>skos:hasTopConcept</code>).
+      This shows the concepts (in the ‘Concept IRI’ column of the result)
+      that will have their <code>skos:topConceptOf</code> and
+      <code>skos:hasTopConcept</code> properties deleted by the
+      following update.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT DISTINCT ?Concept_IRI ?Broader_IRI {
+    SELECT DISTINCT ?Concept_IRI ?Broader_IRI
+    FROM #THESAURUS# {
       ?Concept_IRI a skos:Concept .
       { ?Concept_IRI skos:topConceptOf ?scheme }
         UNION
@@ -96,20 +108,26 @@
   ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Remove <code>skos:topConceptOf</code> and <code>skos:hasTopConcept</code>
+    <title><![CDATA[Remove <code>skos:topConceptOf</code> and
+      <code>skos:hasTopConcept</code>
       properties from SKOS concepts that are narrower than another
-      concept (expressed using <em>either</em> <code>skos:narrower</code> or <code>skos:broader</code>)
+      concept (expressed using <em>either</em> <code>skos:narrower</code> or
+      <code>skos:broader</code>)
       which is also labelled as a top concept
-      (<em>either</em> with <code>skos:topConceptOf</code> or <code>skos:hasTopConcept</code>).
+      (<em>either</em> with <code>skos:topConceptOf</code> or
+      <code>skos:hasTopConcept</code>).
       <strong>WARNING:</strong> this can make the narrower concept seem
       to disappear from PoolParty if it is only
-      linked in the hierarchy using <code>skos:broader</code>. Please make use of the Query
+      linked in the hierarchy using <code>skos:broader</code>.
+      Please make use of the Query
       "Show SKOS concept pairs that are related with <em>either</em>
-      <code>skos:broader</code> or <code>skos:narrower</code> <em>but not both</em>" and the
+      <code>skos:broader</code> or <code>skos:narrower</code>
+      <em>but not both</em>" and the
       corresponding Update if needed, before using this update.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     DELETE {
       ?Concept_IRI skos:topConceptOf ?scheme .
       ?scheme skos:hasTopConcept ?Concept_IRI .
@@ -134,25 +152,33 @@
   <!-- Unbalanced hasTopConcept/topConceptOf -->
 
   <request>
-    <title><![CDATA[Show SKOS concept scheme/top concept pairs that are related
-      with <em>either</em> <code>skos:hasTopConcept</code> or <code>skos:topConceptOf</code>
+    <title><![CDATA[Show SKOS concept scheme/top concept pairs that are
+      related
+      with <em>either</em> <code>skos:hasTopConcept</code> or
+      <code>skos:topConceptOf</code>
       <em>but not both</em> (LIMIT 50).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?ConceptScheme_IRI ?Concept_IRI ?Concept_prefLabel ?Missing_property {
+    SELECT ?ConceptScheme_IRI ?Concept_IRI
+           ?Concept_prefLabel ?Missing_property
+    FROM #THESAURUS# {
       ?ConceptScheme_IRI a skos:ConceptScheme .
       ?Concept_IRI a skos:Concept .
       OPTIONAL { ?Concept_IRI skos:prefLabel ?Concept_prefLabel }
       {
         ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
         BIND ("skos:topConceptOf" AS ?Missing_property)
-        FILTER NOT EXISTS { ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI }
+        FILTER NOT EXISTS {
+          ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
+        }
       } UNION
       {
         ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
         BIND ("skos:hasTopConcept" AS ?Missing_property)
-        FILTER NOT EXISTS { ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI }
+        FILTER NOT EXISTS {
+          ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
+        }
       }
     }
     ORDER BY ?ConceptScheme_IRI ?Concept_IRI
@@ -160,14 +186,16 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Add missing <code>skos:hasTopConcept</code> and <code>skos:topConceptOf</code>
+    <title><![CDATA[Add missing <code>skos:hasTopConcept</code> and
+      <code>skos:topConceptOf</code>
       properties to cases where only one is already present. Do not run this
       update if the Query "Show SKOS concepts that have <em>both</em>
-      <code>skos:topConceptOf</code> and <code>skos:broader</code> properties" returns
-      any results.]]></title>
+      <code>skos:topConceptOf</code> and <code>skos:broader</code> properties"
+      returns any results.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     INSERT {
       ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
     }
@@ -175,8 +203,15 @@
       ?ConceptScheme_IRI a skos:ConceptScheme .
       ?Concept_IRI a skos:Concept .
       ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
-      FILTER NOT EXISTS { ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI }
+      FILTER NOT EXISTS {
+        ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
+      }
     } ;
+    # Repetition of this prefix not required according
+    # to the SPARQL spec, but do this anyway so as
+    # to work with PP Preview Server's underlying Virtuoso Server.
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     INSERT {
       ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
     }
@@ -184,7 +219,9 @@
       ?ConceptScheme_IRI a skos:ConceptScheme .
       ?Concept_IRI a skos:Concept .
       ?Concept_IRI skos:topConceptOf ?ConceptScheme_IRI
-      FILTER NOT EXISTS { ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI }
+      FILTER NOT EXISTS {
+        ?ConceptScheme_IRI skos:hasTopConcept ?Concept_IRI
+      }
     }
     ]]></sparql>
   </request>
@@ -192,12 +229,16 @@
   <!-- Unbalanced broader/narrower -->
 
   <request>
-    <title><![CDATA[Show SKOS concept pairs that are related with <em>either</em>
-      <code>skos:broader</code> or <code>skos:narrower</code> <em>but not both</em> (LIMIT 50).]]></title>
+    <title><![CDATA[Show SKOS concept pairs that are related with
+      <em>either</em>
+      <code>skos:broader</code> or <code>skos:narrower</code>
+      <em>but not both</em> (LIMIT 50).]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Broader_IRI ?Broader_prefLabel ?Narrower_IRI ?Narrower_prefLabel ?Missing_property {
+    SELECT ?Broader_IRI ?Broader_prefLabel
+           ?Narrower_IRI ?Narrower_prefLabel ?Missing_property
+    FROM #THESAURUS# {
       ?Broader_IRI a skos:Concept .
       ?Narrower_IRI a skos:Concept .
       OPTIONAL { ?Broader_IRI skos:prefLabel ?Broader_prefLabel }
@@ -218,11 +259,13 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Add missing <code>skos:broader</code> and <code>skos:narrower</code>
+    <title><![CDATA[Add missing <code>skos:broader</code> and
+      <code>skos:narrower</code>
       properties to cases where only one is already present.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     INSERT {
       ?Narrower_IRI skos:broader ?Broader_IRI
     }
@@ -232,6 +275,11 @@
       ?Broader_IRI skos:narrower ?Narrower_IRI
       FILTER NOT EXISTS { ?Narrower_IRI skos:broader ?Broader_IRI }
     } ;
+    # Repetition of this prefix not required according
+    # to the SPARQL spec, but do this anyway so as
+    # to work with PP Preview Server's underlying Virtuoso Server.
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     INSERT {
       ?Broader_IRI skos:narrower ?Narrower_IRI
     }
@@ -259,10 +307,13 @@
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Concept_IRI ?prefLabel {
+    SELECT ?Concept_IRI ?prefLabel
+    FROM #THESAURUS# {
       ?Concept_IRI a skos:Concept
       OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
-      FILTER NOT EXISTS { ?Concept_IRI skos:broader*/skos:topConceptOf ?scheme }
+      FILTER NOT EXISTS {
+        ?Concept_IRI skos:broader*/skos:topConceptOf ?scheme
+      }
     }
     ORDER BY ?Concept_IRI
     LIMIT 50
@@ -276,11 +327,15 @@
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Concept_IRI ?prefLabel {
+    SELECT ?Concept_IRI ?prefLabel
+    FROM #THESAURUS# {
       ?Concept_IRI a skos:Concept
       OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
-      FILTER NOT EXISTS { ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme }
-      # FILTER NOT EXISTS { ?scheme skos:hasTopConcept/skos:narrower* ?Concept_IRI  }
+      FILTER NOT EXISTS {
+        ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme
+      }
+      # FILTER NOT EXISTS {
+      #   ?scheme skos:hasTopConcept/skos:narrower* ?Concept_IRI  }
     }
     ORDER BY ?Concept_IRI
     LIMIT 50
@@ -294,10 +349,13 @@
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Concept_IRI ?prefLabel {
+    SELECT ?Concept_IRI ?prefLabel
+    FROM #THESAURUS# {
       ?Concept_IRI a skos:Concept
       OPTIONAL { ?Concept_IRI skos:prefLabel ?prefLabel }
-      FILTER NOT EXISTS { ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme }
+      FILTER NOT EXISTS {
+        ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme
+      }
     }
     ORDER BY ?Concept_IRI
     ]]></sparql>
@@ -311,13 +369,16 @@
     <type>Update</type>
     <sparql><![CDATA[
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     DELETE {
       ?Concept_IRI ?p ?o
     }
     WHERE {
       ?Concept_IRI a skos:Concept .
       ?Concept_IRI ?p ?o
-      FILTER NOT EXISTS { ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme }
+      FILTER NOT EXISTS {
+        ?Concept_IRI ^skos:narrower*/^skos:hasTopConcept ?scheme
+      }
     }
     ]]></sparql>
   </request>
@@ -326,15 +387,22 @@
 
   <request>
     <title><![CDATA[Show <code>owl:deprecated</code> resources
-      (LIMIT 50).]]></title>
+      (LIMIT 50). Both the <code>.../thesaurus</code> and
+      <code>.../thesaurus/deprecated</code> named graphs are
+      queried.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Resource_IRI ?rdfs_Label {
-      ?Resource_IRI owl:deprecated true
-      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    SELECT ?Named_Graph ?Resource_IRI ?prefLabel ?rdfs_Label
+    FROM NAMED #THESAURUS#
+    FROM NAMED #THESAURUS/deprecated# {
+      GRAPH ?Named_Graph {
+        ?Resource_IRI owl:deprecated true
+        OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
+        OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+      }
     }
     ORDER BY ?Resource_IRI
     LIMIT 50
@@ -342,15 +410,22 @@
   </request>
   <request>
     <title><![CDATA[Show <code>owl:deprecated</code> resources
-      (no LIMIT).]]></title>
+      (no LIMIT). Both the <code>.../thesaurus</code> and
+      <code>.../thesaurus/deprecated</code> named graphs are
+      queried.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Resource_IRI ?rdfs_Label {
-      ?Resource_IRI owl:deprecated true
-      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    SELECT ?Named_Graph ?Resource_IRI ?prefLabel ?rdfs_Label
+    FROM NAMED #THESAURUS#
+    FROM NAMED #THESAURUS/deprecated# {
+      GRAPH ?Named_Graph {
+        ?Resource_IRI owl:deprecated true
+        OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
+        OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+      }
     }
     ORDER BY ?Resource_IRI
     ]]></sparql>
@@ -359,17 +434,23 @@
   <request>
     <title><![CDATA[Show resources that are <em>both</em>
       <code>skos:Concept</code> and <code>owl:deprecated</code>
-      (LIMIT 50).]]></title>
+      (LIMIT 50). Both the <code>.../thesaurus</code> and
+      <code>.../thesaurus/deprecated</code> named graphs are
+      queried; the two triples must be in the same named graph.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Resource_IRI ?prefLabel ?rdfs_Label {
-      ?Resource_IRI a skos:Concept .
-      ?Resource_IRI owl:deprecated true
-      OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
-      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    SELECT ?Named_Graph ?Resource_IRI ?prefLabel ?rdfs_Label
+    FROM NAMED #THESAURUS#
+    FROM NAMED #THESAURUS/deprecated# {
+      GRAPH ?Named_Graph {
+        ?Resource_IRI a skos:Concept .
+        ?Resource_IRI owl:deprecated true
+        OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
+        OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+      }
     }
     ORDER BY ?Resource_IRI
     LIMIT 50
@@ -378,23 +459,30 @@
   <request>
     <title><![CDATA[Show resources that are <em>both</em>
       <code>skos:Concept</code> and <code>owl:deprecated</code>
-      (no LIMIT).]]></title>
+      (no LIMIT). Both the <code>.../thesaurus</code> and
+      <code>.../thesaurus/deprecated</code> named graphs are
+      queried; the two triples must be in the same named graph..]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Resource_IRI ?prefLabel ?rdfs_Label {
-      ?Resource_IRI a skos:Concept .
-      ?Resource_IRI owl:deprecated true
-      OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
-      OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+    SELECT ?Named_Graph ?Resource_IRI ?prefLabel ?rdfs_Label
+    FROM NAMED #THESAURUS#
+    FROM NAMED #THESAURUS/deprecated# {
+      GRAPH ?Named_Graph {
+        ?Resource_IRI a skos:Concept .
+        ?Resource_IRI owl:deprecated true
+        OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
+        OPTIONAL { ?Resource_IRI rdfs:label ?rdfs_Label }
+      }
     }
     ORDER BY ?Resource_IRI
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Remove the <code>owl:deprecated</code> property
+    <title><![CDATA[<i>Warning: not yet tested with the latest PoolParty.</i>
+      Remove the <code>owl:deprecated</code> property
       from all resources
       that are <em>both</em> <code>skos:Concept</code> and
       <code>owl:deprecated</code>. Remove
@@ -408,6 +496,7 @@
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     # Delete the rdfs:label first, separately, because its deletion
     # is conditional on the presence of a skos:prefLabel ...
+    WITH #THESAURUS#
     DELETE {
       ?Resource_IRI rdfs:label ?label
     }
@@ -419,6 +508,11 @@
     } ;
     # ... whereas, deletion of the owl:deprecated property is not
     # conditional in the same way.
+    # Repetition of this prefix not required according
+    # to the SPARQL spec, but do this anyway so as
+    # to work with PP Preview Server's underlying Virtuoso Server.
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     DELETE {
       ?Resource_IRI owl:deprecated true
     }
@@ -429,7 +523,8 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Show resources that are <em>both</em>
+    <title><![CDATA[<i>Warning: not yet tested with the latest PoolParty.</i>
+      Show resources that are <em>both</em>
       <code>skos:ConceptScheme</code> and <code>owl:deprecated</code>
       (no LIMIT). If this query returns any results, it is recommended
       that you run the query "Show resources that are
@@ -441,7 +536,8 @@
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Resource_IRI ?prefLabel ?rdfs_Label {
+    SELECT ?Resource_IRI ?prefLabel ?rdfs_Label
+    FROM #THESAURUS# {
       ?Resource_IRI a skos:ConceptScheme .
       ?Resource_IRI owl:deprecated true
       OPTIONAL { ?Resource_IRI skos:prefLabel ?prefLabel }
@@ -451,7 +547,8 @@
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Remove the <code>owl:deprecated</code> property
+    <title><![CDATA[<i>Warning: not yet tested with the latest PoolParty.</i>
+      Remove the <code>owl:deprecated</code> property
       from all resources
       that are <em>both</em> <code>skos:ConceptScheme</code> and
       <code>owl:deprecated</code>, as long as they also
@@ -461,6 +558,7 @@
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     DELETE {
       ?Resource_IRI owl:deprecated true
     }
@@ -473,45 +571,59 @@
   </request>
   <request>
     <title><![CDATA[Show resources that are <code>owl:deprecated</code>
-      but not also
-      SKOS concepts, with all their properties (LIMIT 50).]]></title>
+      but not also SKOS concepts, with all their properties (LIMIT 50).
+      Both the <code>.../thesaurus</code> and
+      <code>.../thesaurus/deprecated</code> named graphs are
+      queried.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Resource_IRI ?Predicate ?Object
+    SELECT ?Named_Graph ?Resource_IRI ?Predicate ?Object
+    FROM NAMED #THESAURUS#
+    FROM NAMED #THESAURUS/deprecated#
     WHERE {
-      ?Resource_IRI owl:deprecated true .
-      ?Resource_IRI ?Predicate ?Object .
-      FILTER NOT EXISTS { ?Resource_IRI a skos:Concept }
+      GRAPH ?Named_Graph {
+        ?Resource_IRI owl:deprecated true .
+        ?Resource_IRI ?Predicate ?Object .
+        FILTER NOT EXISTS { ?Resource_IRI a skos:Concept }
+      }
     }
     LIMIT 50
     ]]></sparql>
   </request>
   <request>
     <title><![CDATA[Show resources that are <code>owl:deprecated</code>
-      but not also
-      SKOS concepts, with all their properties (no LIMIT).]]></title>
+      but not also SKOS concepts, with all their properties (no LIMIT).
+      Both the <code>.../thesaurus</code> and
+      <code>.../thesaurus/deprecated</code> named graphs are
+      queried.]]></title>
     <type>Query</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-    SELECT ?Resource_IRI ?Predicate ?Object
+    SELECT ?Named_Graph ?Resource_IRI ?Predicate ?Object
+    FROM NAMED #THESAURUS#
+    FROM NAMED #THESAURUS/deprecated#
     WHERE {
-      ?Resource_IRI owl:deprecated true .
-      ?Resource_IRI ?Predicate ?Object .
-      FILTER NOT EXISTS { ?Resource_IRI a skos:Concept }
+      GRAPH ?Named_Graph {
+        ?Resource_IRI owl:deprecated true .
+        ?Resource_IRI ?Predicate ?Object .
+        FILTER NOT EXISTS { ?Resource_IRI a skos:Concept }
+      }
     }
     ]]></sparql>
   </request>
   <request>
-    <title><![CDATA[Remove resources that are <code>owl:deprecated</code>
+    <title><![CDATA[<i>Warning: not yet tested with the latest PoolParty.</i>
+      Remove resources that are <code>owl:deprecated</code>
       but not also
       SKOS concepts, with all their properties.]]></title>
     <type>Update</type>
     <sparql><![CDATA[
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    WITH #THESAURUS#
     DELETE {
       ?Resource_IRI ?p ?o
     }
@@ -532,7 +644,8 @@
       repository.)]]></title>
     <type>Query</type>
     <sparql><![CDATA[
-    SELECT ?s ?p ?o {
+    SELECT ?s ?p ?o
+    FROM #THESAURUS# {
       ?s ?p ?o
       FILTER ((isIRI(?s) && REGEX(STR(?s),"\\p{Z}")) ||
       (isIRI(?p) && REGEX(STR(?p),"\\p{Z}")) ||
@@ -554,7 +667,8 @@
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     PREFIX dc: <http://purl.org/dc/elements/1.1/>
     PREFIX dcterms: <http://purl.org/dc/terms/>
-    SELECT ?Resource_IRI ?prefLabel ?Predicate {
+    SELECT ?Resource_IRI ?prefLabel ?Predicate
+    FROM #THESAURUS# {
       ?Resource_IRI ?Predicate ?Object
       FILTER (?Predicate IN (rdfs:label, dc:title, dcterms:title,
         skos:prefLabel, skos:altLabel, skos:hiddenLabel))
@@ -568,7 +682,7 @@
   </request>
 
   <request>
-    <title><![CDATA[Show empty labels (prefLabels, altLabels, hiddenLabels)
+    <title><![CDATA[<i>Show empty labels (prefLabels, altLabels, hiddenLabels)
       (no LIMIT).
       (Empty labels can not be edited or deleted in PoolParty.)]]></title>
     <type>Query</type>
@@ -577,7 +691,8 @@
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     PREFIX dc: <http://purl.org/dc/elements/1.1/>
     PREFIX dcterms: <http://purl.org/dc/terms/>
-    SELECT ?Resource_IRI ?prefLabel ?Predicate {
+    SELECT ?Resource_IRI ?prefLabel ?Predicate
+    FROM #THESAURUS# {
       ?Resource_IRI ?Predicate ?Object
       FILTER (?Predicate IN (rdfs:label, dc:title, dcterms:title,
         skos:prefLabel, skos:altLabel, skos:hiddenLabel))
@@ -601,6 +716,7 @@
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     PREFIX dc: <http://purl.org/dc/elements/1.1/>
     PREFIX dcterms: <http://purl.org/dc/terms/>
+    WITH #THESAURUS#
     DELETE {
       ?Resource_IRI ?Predicate ?Object
     }
