@@ -59,7 +59,7 @@ public final class PoolPartyToolkit {
     /** Get the PoolParty projects available to the user.
      * @param loginBean The bean containing the user's PoolParty username
      * and password.
-     * @return The user's PoolParty projects as a HashMap from id to
+     * @return The user's PoolParty projects as an array of instances of
      *         PoolPartyProject. */
     public static PoolPartyProject[] getProjects(
             final LoginBean loginBean) {
