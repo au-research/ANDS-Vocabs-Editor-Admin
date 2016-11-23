@@ -732,4 +732,27 @@
     ]]></sparql>
   </request>
 
+  <!-- Patching up after migration to PoolParty Release 5.5. -->
+
+  <request>
+    <title><![CDATA[Remove extraneous quality scenario triple
+      left over from migration to PoolParty Release 5.5.
+      See <a
+      href="https://help.poolparty.biz/doc/user-guide-for-knowledge-engineers/troubleshooting/remove-duplicate-quality-scenario-triple-from-the-thesaurus-graph-introduced-on-upgrade-to-5-6-or-5-5"
+      target="_blank">PoolParty's information note</a>.
+      ]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    # We do SWC's update, even though a bit odd.
+    WITH #THESAURUS#
+    DELETE {
+      ?s ?p ?o
+    }
+    WHERE {
+      <http://schema.semantic-web.at/ppt/3.2/quality/scenario/dialog.qualitysettings.scenario.default> ?p ?o .
+      ?s ?p2 ?o2
+    }
+    ]]></sparql>
+  </request>
+
 </requests>
