@@ -682,7 +682,7 @@
   </request>
 
   <request>
-    <title><![CDATA[<i>Show empty labels (prefLabels, altLabels, hiddenLabels)
+    <title><![CDATA[Show empty labels (prefLabels, altLabels, hiddenLabels)
       (no LIMIT).
       (Empty labels can not be edited or deleted in PoolParty.)]]></title>
     <type>Query</type>
@@ -735,7 +735,9 @@
   <!-- Patching up after migration to PoolParty Release 5.5. -->
 
   <request>
-    <title><![CDATA[Remove extraneous quality scenario triple
+    <title><![CDATA[<b>ANDS use only during migration to PoolParty
+      Release 5.5</b>:
+      Remove extraneous quality scenario triple
       left over from migration to PoolParty Release 5.5.
       See <a
       href="https://help.poolparty.biz/doc/user-guide-for-knowledge-engineers/troubleshooting/remove-duplicate-quality-scenario-triple-from-the-thesaurus-graph-introduced-on-upgrade-to-5-6-or-5-5"
@@ -754,5 +756,64 @@
     }
     ]]></sparql>
   </request>
+
+  <request>
+    <title><![CDATA[Show all triples in the
+      <code>qualitySettings</code> named graph.]]></title>
+    <type>Query</type>
+    <sparql><![CDATA[
+    SELECT ?s ?p ?o
+    FROM #THESAURUS/qualitySettings#
+    WHERE {
+      ?s ?p ?o
+    }
+    ]]></sparql>
+  </request>
+
+  <request>
+    <title><![CDATA[<b>ANDS use only during migration to PoolParty
+      Release 5.5</b>:
+      Remove all triples from the
+      <code>qualitySettings</code> named graph.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    WITH #THESAURUS/qualitySettings#
+    DELETE {
+      ?s ?p ?o
+    }
+    WHERE {
+      ?s ?p ?o
+    }
+    ]]></sparql>
+  </request>
+
+
+  <request>
+    <title><![CDATA[<b>ANDS use only during migration to PoolParty
+      Release 5.5</b>:
+      Move quality settings triples from the <code>thesaurus</code>
+      named graph into the <code>qualitySettings</code>
+      named graph.]]></title>
+    <type>Update</type>
+    <sparql><![CDATA[
+    DELETE {
+      GRAPH #THESAURUS# {
+        ?s ?p ?o
+      }
+    }
+    INSERT {
+      GRAPH #THESAURUS/qualitySettings# {
+        ?s ?p ?o
+      }
+    }
+    USING #THESAURUS#
+    WHERE {
+      ?s ?p ?o
+      FILTER (STRSTARTS(STR(?p),
+              "http://schema.semantic-web.at/ppt/3.2/quality"))
+    }
+    ]]></sparql>
+  </request>
+
 
 </requests>
