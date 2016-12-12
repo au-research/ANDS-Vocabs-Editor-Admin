@@ -24,46 +24,63 @@ public class PoolPartyProject implements Comparable<PoolPartyProject>,
     /** The project title. */
     private String title;
 
-    /** The project uriSupplement. */
+    /** The project URI. */
+    private String uri;
+
+    /** The project URI supplement. */
     private String uriSupplement;
 
-    /**
-     * @return the id
+    /** Get the id.
+     * @return The id.
      */
     public final String getId() {
         return id;
     }
 
     /** Set the project id.
-     * @param anId the id to set
+     * @param anId The id to set.
      */
     public final void setId(final String anId) {
         id = anId;
     }
 
     /** Get the project title.
-     * @return the title
+     * @return The title.
      */
     public final String getTitle() {
         return title;
     }
 
     /** Set the project title.
-     * @param aTitle the title to set
+     * @param aTitle The title to set.
      */
     public final void setTitle(final String aTitle) {
         title = aTitle;
     }
 
-    /** Get the project uriSupplement.
-     * @return the uriSupplement
+    /** Get the project URI.
+     * @return The URI.
+     */
+    public final String getUri() {
+        return uri;
+    }
+
+    /** Set the project URI.
+     * @param aUri The URI to set.
+     */
+    public final void setUri(final String aUri) {
+        uri = aUri;
+    }
+
+    /** Get the project URI supplement.
+     * @return The URI supplement.
      */
     public final String getUriSupplement() {
         return uriSupplement;
     }
 
-    /** Set the project uriSupplement.
-     * @param aUriSupplement the uriSupplement to set
+    /** Set the project URI supplement.
+     * @param aUriSupplement The URI supplement to set.
      */
     public final void setUriSupplement(final String aUriSupplement) {
         uriSupplement = aUriSupplement;

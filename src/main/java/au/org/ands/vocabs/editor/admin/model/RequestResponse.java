@@ -21,6 +21,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import au.org.ands.vocabs.editor.admin.utils.PropertyConstants;
 import au.org.ands.vocabs.editor.admin.utils.ToolProperties;
 
 /** Response of one request to PoolParty, either of a query or
@@ -142,7 +143,7 @@ public class RequestResponse implements Serializable {
 
     /** File representing the XSLT script. */
     private static String stylesheet =
-            ToolProperties.getProperty("SPARQLResults.xsl");
+            ToolProperties.getProperty(PropertyConstants.SPARQLRESULTS_XSL);
 
     /** TransformerFactory used when running the XSLT script. */
     private static TransformerFactory tFactory =

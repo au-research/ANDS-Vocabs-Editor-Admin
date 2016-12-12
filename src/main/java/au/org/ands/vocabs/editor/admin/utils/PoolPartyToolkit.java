@@ -38,6 +38,20 @@ public final class PoolPartyToolkit {
     private static final Properties PROPS =
             ToolProperties.getProperties();
 
+    /** Regular expression defining the placeholder to use in queries
+     * and updates, to be replaced with
+     * the IRI of the named graph that contains the project's
+     * thesaurus data. The replacement text will include angle brackets;
+     * therefore, do not include them in the template. Sample uses within
+     * a query:
+     * <pre>
+     * SELECT ?s FROM #THESAURUS# WHERE { ?s ... }
+     * SELECT ?s FROM #THESAURUS/deprecated# WHERE { ?s ... }
+     * </pre>
+     * */
+    private static final String PROJECT_THESAURUS_DATA_GRAPH =
+            "#THESAURUS(/[^#]+)?#";
+
     /** Private constructor for a utility class. */
     private PoolPartyToolkit() {
     }
@@ -45,21 +59,21 @@ public final class PoolPartyToolkit {
     /** Get the PoolParty projects available to the user.
      * @param loginBean The bean containing the user's PoolParty username
      * and password.
-     * @return The user's PoolParty projects as a HashMap from id to
+     * @return The user's PoolParty projects as an array of instances of
      *         PoolPartyProject. */
     public static PoolPartyProject[] getProjects(
             final LoginBean loginBean) {
-        String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
-                + "api/projects/";
-
-        LOGGER.debug("Getting metadata from " + remoteUrl);
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTY_REMOTEURL);
 
         Client client = ClientBuilder.newClient();
         // Need to register the Jackson provider in order
         // to deserialize the JSON returned by PoolParty.
         client.register(JacksonJaxbJsonProvider.class);
 
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl)
+                .path("api/projects");
+        LOGGER.debug("Getting metadata from " + target.getUri());
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(loginBean.getUsername(),
                         loginBean.getPassword());
@@ -93,17 +107,13 @@ public final class PoolPartyToolkit {
             final LoginBean loginBean,
             final String uriSupplement,
             final String query) {
-        String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
-                + "sparql/" + uriSupplement;
-
-        LOGGER.debug("Running query: " + remoteUrl);
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTY_REMOTEURL);
 
         Client client = ClientBuilder.newClient();
-        // Need to register the Jackson provider in order
-        // to deserialize the JSON returned by PoolParty.
-//        client.register(JacksonJaxbJsonProvider.class);
-
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl)
+                .path("sparql").path(uriSupplement);
+        LOGGER.debug("Running query: " + target.getUri());
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(loginBean.getUsername(),
                         loginBean.getPassword());
@@ -124,6 +134,8 @@ public final class PoolPartyToolkit {
         LOGGER.debug("runQuery response code: " + response.getStatus());
         if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
             // Query failed.
+            LOGGER.debug("runQuery response error data: "
+                    + response.readEntity(String.class));
             return null;
         }
 
@@ -143,27 +155,23 @@ public final class PoolPartyToolkit {
             final LoginBean loginBean,
             final String projectID,
             final String update) {
-        String remoteUrl = PROPS.getProperty("PoolParty.remoteUrl")
-                + "api/projects/" + projectID + "/update";
-
-        LOGGER.debug("Running update: " + remoteUrl);
+        String remoteUrl = PROPS.getProperty(
+                PropertyConstants.POOLPARTY_REMOTEURL);
 
         Client client = ClientBuilder.newClient();
-        // Need to register the Jackson provider in order
-        // to deserialize the JSON returned by PoolParty.
-//        client.register(JacksonJaxbJsonProvider.class);
-
-        WebTarget target = client.target(remoteUrl);
+        WebTarget target = client.target(remoteUrl)
+                .path("api/projects").path(projectID).path("update");
+        LOGGER.debug("Running update: " + target.getUri());
         HttpAuthenticationFeature feature =
                 HttpAuthenticationFeature.basic(loginBean.getUsername(),
                         loginBean.getPassword());
         target.register(feature);
 
-        // Seem to need to set this "content-type" here.
-        // Not enough to set the Content-Type using request() below.
-
+        // Ask for JSON, in case there is an error.
+        // If you ask for plain text, and there is an error,
+        // you don't get any error message.
         Invocation.Builder invocationBuilder =
-                target.request(MediaType.TEXT_PLAIN_TYPE);
+                target.request(MediaType.APPLICATION_JSON);
 
         Response response = invocationBuilder.post(Entity.entity(update,
                 MediaType.TEXT_PLAIN));
@@ -171,6 +179,8 @@ public final class PoolPartyToolkit {
         LOGGER.debug("runUpdate response code: " + response.getStatus());
         if (response.getStatus() >= Status.BAD_REQUEST.getStatusCode()) {
             // Update failed.
+            LOGGER.debug("runUpdate response error data: "
+                    + response.readEntity(String.class));
             return null;
         }
 
@@ -208,6 +218,7 @@ public final class PoolPartyToolkit {
                 continue;
             }
             PoolPartyProject project = poolPartyProjects[projectIndex];
+            String projectThesaurusGraph = getThesaurusGraph(project);
             for (int requestIndex = 0;
                     requestIndex < selectedPoolPartyRequests.length;
                     requestIndex++) {
@@ -217,6 +228,10 @@ public final class PoolPartyToolkit {
                 PoolPartyRequest request = poolPartyRequests[requestIndex];
                 String type = request.getType();
                 String sparql = request.getSparql();
+                // Replace occurrences of the thesaurus data graph placeholder
+                // within the template.
+                sparql = sparql.replaceAll(PROJECT_THESAURUS_DATA_GRAPH,
+                        projectThesaurusGraph);
                 LOGGER.debug("processRequest: user: " + loginBean.getUsername()
                         + ", project ID: " + project.getId()
                         + ", request: " + request.getTitle());
@@ -247,6 +262,20 @@ public final class PoolPartyToolkit {
         }
         loginBean.setLastResults(allResults);
         return ToolConstants.WELCOME_ACTION;
+    }
+
+    /** Get the IRI of the named graph containing the project's thesaurus data,
+     * with a substitution element $1 for a suffix.
+     * The result has surrounding angle brackets.
+     * The result of this method is intended to be used as the second parameter
+     * to the method {@link String#replaceAll(String, String)}, where
+     * the value of the second parameter contains one capturing group.
+     * @param project The PoolParty project definition.
+     * @return The IRI of the named graph, as a String containing $1.
+     *   Example: <code>&lt;http://path.to.api/1234/thesaurus$1&gt;</code>
+     */
+    private static String getThesaurusGraph(final PoolPartyProject project) {
+        return "<" + project.getUri() + "/thesaurus" + "$1" + ">";
     }
 
 }

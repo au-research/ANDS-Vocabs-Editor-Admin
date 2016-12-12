@@ -145,6 +145,7 @@
              classpathref="dev-compile-main.classpath"
              linksource="true"
              includenosourcepackages="true"
+             private="true"
              >
     </javadoc>
   </target>
